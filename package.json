@@ -1,14 +1,9 @@
 {
-  "name": "byteform-agency",
-  "private": true,
+  "name": "byteform",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Byteform Digital Atelier",
+  "main": "server.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "devDependencies": {
-    "vite": "^6.1.1"
+    "start": "node server.js"
   }
 }
