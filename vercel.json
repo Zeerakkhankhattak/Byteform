@@ -1,10 +1,7 @@
 {
-  "framework": null,
-  "buildCommand": "",
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/admin", "destination": "/byteform-admin/index.html" },
-    { "source": "/admin/", "destination": "/byteform-admin/index.html" },
-    { "source": "/admin/:path*", "destination": "/byteform-admin/:path*" }
+  "redirects": [
+    { "source": "/byteform-admin", "destination": "/admin", "permanent": true },
+    { "source": "/byteform-admin/", "destination": "/admin", "permanent": true }
   ]
 }

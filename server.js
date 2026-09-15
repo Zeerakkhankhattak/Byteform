@@ -137,16 +137,16 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Normalize admin routes: redirect /admin to /admin/
-  if (reqPath === '/admin' || reqPath === '/byteform-admin' || reqPath === '/byteform-admin/') {
-    res.writeHead(302, { 'Location': '/admin/' });
-    res.end();
+  // Admin portal routes: serve admin.html
+  if (reqPath === '/admin' || reqPath === '/admin/') {
+    serveFile(res, path.join(__dirname, 'admin.html'));
     return;
   }
 
-  // Serve Admin Portal at /admin/
-  if (reqPath === '/admin/') {
-    serveFile(res, path.join(__dirname, 'byteform-admin', 'index.html'));
+  // Redirect legacy /byteform-admin to /admin
+  if (reqPath === '/byteform-admin' || reqPath === '/byteform-admin/') {
+    res.writeHead(302, { 'Location': '/admin' });
+    res.end();
     return;
   }
 
