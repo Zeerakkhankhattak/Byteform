@@ -1,4 +1,6 @@
 {
+  "framework": null,
+  "buildCommand": "",
   "cleanUrls": true,
   "rewrites": [
     { "source": "/admin", "destination": "/byteform-admin/index.html" },

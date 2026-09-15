@@ -2,8 +2,8 @@
   "name": "byteform-admin",
   "version": "1.0.0",
   "description": "Byteform Digital Atelier - Private Admin Portal for Job Applications",
-  "main": "server.js",
   "scripts": {
+    "build": "echo 'Admin static build complete'",
     "start": "node server.js"
   }
 }
