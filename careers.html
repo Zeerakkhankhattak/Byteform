@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Careers &middot; Byteform Digital Studio</title>
+    <meta name="description" content="Explore open careers at Byteform: Video Editor, DevOps Engineer, SEO Specialist, and Full Stack Developer. Build ambitious software directly with our founders." />
+
+    <!-- Google Sans Typography Only -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet" />
+
+    <!-- Website Icon (Favicon & Browser Tab Icon) -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/website icon.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/website icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/website icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/website icon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/website icon.png" />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="scroll-progress" class="scroll-progress-bar"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="index.html" class="site-logo" aria-label="Byteform Home">
+          <img src="assets/for dark bg.png" alt="Byteform" class="logo-img logo-dark" />
+          <img src="assets/for light bg.png" alt="Byteform" class="logo-img logo-light" />
+        </a>
+
+        <nav class="nav-links">
+          <a href="index.html" class="nav-link">Home</a>
+          <a href="capabilities.html" class="nav-link">Capabilities</a>
+          <a href="collective.html" class="nav-link">Collective</a>
+          <a href="protocol.html" class="nav-link">Protocol</a>
+          <a href="reviews.html" class="nav-link">Reviews</a>
+          <a href="careers.html" class="nav-link active">Careers</a>
+        </nav>
+
+        <div class="header-actions">
+          <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme"></button>
+          <a href="#positions" class="btn btn-primary btn-sm">
+            <span>View Positions</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <div class="container">
+          <a href="index.html" class="back-link">&larr; Return to Home Overview</a>
+          
+          <div style="margin-bottom: 1rem;">
+            <span class="pill pill-blue">
+              <span class="dot-indicator"></span>
+              We Are Hiring &middot; Global Remote Roles
+            </span>
+          </div>
+
+          <h1 class="hero-tagline">
+            Careers at <span class="text-blue">Byteform</span>.
+          </h1>
+
+          <p class="hero-description">
+            We are expanding our core studio squad. If you are passionate about visual craft, cloud resilience, or fast code and hate corporate micromanagement, you belong here.
+          </p>
+
+          <div class="wit-callout">
+            "If your video edits have jump cuts that make sense, or you enjoy debugging DNS at 3 AM with coffee, we want to hear from you."
+          </div>
+        </div>
+      </section>
+
+      <!-- CULTURE & PERKS -->
+      <section class="section" style="padding-bottom: 2rem;">
+        <div class="container">
+          <div class="section-header">
+            <div class="section-category">Culture & Standards</div>
+            <h2 class="section-title">How we work together.</h2>
+            <p class="section-subtitle">We believe in small teams of exceptional specialists who take genuine pride in their output.</p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem;">
+              <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--accent-blue);">100% Remote Anywhere</h4>
+              <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">Work from London, Tokyo, Lisbon, or your home setup. As long as you deliver exceptional work, we do not care where your desk is.</p>
+            </div>
+
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem;">
+              <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--accent-blue);">Zero Useless Meetings</h4>
+              <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">No daily standups to justify your existence. We communicate asynchronously via Slack, ship code, and review live pull requests.</p>
+            </div>
+
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem;">
+              <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--accent-blue);">Competitive Direct Pay</h4>
+              <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">We pay top tier market rates for specialists. Contract and full time arrangements with guaranteed milestone bonuses.</p>
+            </div>
+
+            <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 2rem;">
+              <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--accent-blue);">Direct Founder Contact</h4>
+              <p style="color: var(--text-secondary); line-height: 1.6; font-size: 0.95rem;">Collaborate shoulder to shoulder with the studio founders. Your ideas and architectural proposals are implemented directly.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- POSITIONS SECTION -->
+      <section id="positions" class="section section-alt">
+        <div class="container">
+          
+          <div class="section-header">
+            <div class="section-category">Open Opportunities</div>
+            <h2 class="section-title">Current open roles.</h2>
+            <p class="section-subtitle">Click Apply Now on any role to submit your portfolio and contact info directly to the founders.</p>
+          </div>
+
+          <div class="careers-grid">
+            
+            <!-- Position 01: Video Editor -->
+            <div class="career-card">
+              <div>
+                <div class="career-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                </div>
+                <div class="career-header">
+                  <span class="career-dept">Motion & Creative</span>
+                  <span class="career-badge">Remote</span>
+                </div>
+                <h3>Video Editor</h3>
+                <p class="career-desc">
+                  Produce high retention short form videos, brand launch films, kinetic motion graphics, and audio pacing for tech products and digital platforms.
+                </p>
+                <div class="career-tags">
+                  <span class="career-tag">After Effects</span>
+                  <span class="career-tag">Premiere Pro</span>
+                  <span class="career-tag">Motion Graphics</span>
+                  <span class="career-tag">Sound Design</span>
+                </div>
+              </div>
+              <div class="career-footer">
+                <span class="career-type">Full Time or Contract</span>
+                <button class="btn btn-secondary btn-sm open-apply-btn" data-role="Video Editor">
+                  <span>Apply Now</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Position 02: DevOps Engineer -->
+            <div class="career-card">
+              <div>
+                <div class="career-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                </div>
+                <div class="career-header">
+                  <span class="career-dept">Cloud & Infrastructure</span>
+                  <span class="career-badge">Remote</span>
+                </div>
+                <h3>DevOps Engineer</h3>
+                <p class="career-desc">
+                  Architect resilient cloud infrastructure on AWS and GCP with Kubernetes, Terraform automation, zero downtime pipelines, and edge monitoring.
+                </p>
+                <div class="career-tags">
+                  <span class="career-tag">Kubernetes</span>
+                  <span class="career-tag">Docker</span>
+                  <span class="career-tag">Terraform</span>
+                  <span class="career-tag">AWS & GCP</span>
+                </div>
+              </div>
+              <div class="career-footer">
+                <span class="career-type">Full Time</span>
+                <button class="btn btn-secondary btn-sm open-apply-btn" data-role="DevOps Engineer">
+                  <span>Apply Now</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Position 03: SEO Specialist -->
+            <div class="career-card">
+              <div>
+                <div class="career-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><polyline points="11 8 11 11 14 11"></polyline></svg>
+                </div>
+                <div class="career-header">
+                  <span class="career-dept">Growth & Discovery</span>
+                  <span class="career-badge">Remote</span>
+                </div>
+                <h3>SEO Specialist</h3>
+                <p class="career-desc">
+                  Lead programmatic SEO architecture, schema implementation, Core Web Vitals audit, and content acquisition funnels. High intent search strategies.
+                </p>
+                <div class="career-tags">
+                  <span class="career-tag">Technical SEO</span>
+                  <span class="career-tag">Schema Markup</span>
+                  <span class="career-tag">Core Web Vitals</span>
+                  <span class="career-tag">Search Analytics</span>
+                </div>
+              </div>
+              <div class="career-footer">
+                <span class="career-type">Full Time</span>
+                <button class="btn btn-secondary btn-sm open-apply-btn" data-role="SEO Specialist">
+                  <span>Apply Now</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Position 04: Full-Stack Developer -->
+            <div class="career-card">
+              <div>
+                <div class="career-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                </div>
+                <div class="career-header">
+                  <span class="career-dept">Engineering</span>
+                  <span class="career-badge">Remote</span>
+                </div>
+                <h3>Full Stack Developer</h3>
+                <p class="career-desc">
+                  Build responsive web platforms using React, Next.js 15, TypeScript, Node.js, and PostgreSQL. We care about clean architecture and snappy interfaces.
+                </p>
+                <div class="career-tags">
+                  <span class="career-tag">Next.js 15</span>
+                  <span class="career-tag">TypeScript</span>
+                  <span class="career-tag">PostgreSQL</span>
+                  <span class="career-tag">Clean APIs</span>
+                </div>
+              </div>
+              <div class="career-footer">
+                <span class="career-type">Full Time</span>
+                <button class="btn btn-secondary btn-sm open-apply-btn" data-role="Full Stack Developer">
+                  <span>Apply Now</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- APPLICATION MODAL FOR CAREERS -->
+    <div id="apply-modal" class="modal-overlay">
+      <div class="modal-box">
+        <button id="close-apply-modal" class="modal-close-btn" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+
+        <div style="margin-bottom: 1.5rem;">
+          <div class="section-category" style="margin-bottom: 0.25rem;">Apply for Role</div>
+          <h3 style="font-size: 1.6rem;">Join the Byteform Team</h3>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">
+            Submit your profile details and our founders will review your background promptly.
+          </p>
+        </div>
+
+        <form id="careers-apply-form" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Position</label>
+            <input id="apply-role" type="text" readonly class="form-input" style="opacity: 0.85; background: var(--bg-secondary);" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Full Name *</label>
+              <input id="apply-name" type="text" required placeholder="Jane Doe" class="form-input" />
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Email Address *</label>
+              <input id="apply-email" type="email" required placeholder="jane@example.com" class="form-input" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Portfolio, GitHub, or LinkedIn URL *</label>
+            <input id="apply-link" type="url" required placeholder="https://github.com/janedoe" class="form-input" />
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Experience & Highlights</label>
+            <textarea id="apply-notes" rows="3" placeholder="Tell us briefly about your craft, proudest projects, and tech stack..." class="form-input" style="resize: vertical;"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 0.5rem;">
+            <span>Submit Application</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </form>
+
+        <div id="apply-success" style="display: none; text-align: center; padding: 2rem 0;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--accent-blue-subtle); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; font-size: 22px; font-weight: bold;">
+            ✓
+          </div>
+          <h4 style="font-size: 1.4rem; margin-bottom: 0.4rem;">Application Received.</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Thank you for your interest in Byteform. Our founders will review your portfolio and reach out via email.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-col">
+          <a href="index.html" class="site-logo" style="margin-bottom: 1.25rem;">
+            <img src="assets/for dark bg.png" alt="Byteform" class="logo-img logo-dark" />
+            <img src="assets/for light bg.png" alt="Byteform" class="logo-img logo-light" />
+          </a>
+          <p class="footer-desc">
+            Independent digital atelier engineering high impact web applications, cloud native infrastructure, and tactile design systems.
+          </p>
+          <a href="mailto:byteform3@gmail.com" onclick="handleDirectEmailClick(event)" class="footer-email-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+            <span>byteform3@gmail.com</span>
+          </a>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Studio Directory</h4>
+          <ul class="footer-links">
+            <li><a href="index.html" class="footer-link">Home</a></li>
+            <li><a href="capabilities.html" class="footer-link">Capabilities</a></li>
+            <li><a href="collective.html" class="footer-link">Collective</a></li>
+            <li><a href="protocol.html" class="footer-link">Protocol</a></li>
+            <li><a href="reviews.html" class="footer-link">Reviews</a></li>
+            <li><a href="careers.html" class="footer-link">Careers</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Engineering Standards</h4>
+          <ul class="footer-links">
+            <li><span class="footer-link">Next.js 15 &amp; React</span></li>
+            <li><span class="footer-link">Rust &amp; Node Services</span></li>
+            <li><span class="footer-link">Kubernetes &amp; AWS</span></li>
+            <li><span class="footer-link">Sub 60ms SLA</span></li>
+            <li><span class="footer-link">Zero Outsourcing</span></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Connect &amp; Social</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.94rem; line-height: 1.55;">
+            Follow our design releases, architectural benchmarks, and open roles.
+          </p>
+          <div class="social-links" id="footer-social-links">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              <span>Instagram</span>
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Facebook">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              <span>Facebook</span>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.67 1.67 0 1 0 0-3.34 1.67 1.67 0 0 0 0 3.34M7.86 18.5V10.13H5.07V18.5h2.79z"/></svg>
+              <span>LinkedIn</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="container footer-bottom">
+        <div>
+          &copy; 2026 Byteform Digital Studio &middot; All rights reserved
+        </div>
+        <div style="display: flex; gap: 1.5rem;">
+          <a href="careers.html" style="color: inherit; text-decoration: none;">Careers</a>
+          <a href="mailto:byteform3@gmail.com" onclick="handleDirectEmailClick(event)" style="color: inherit; text-decoration: none;">byteform3@gmail.com</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

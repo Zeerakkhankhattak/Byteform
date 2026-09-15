@@ -18,10 +18,63 @@ const MIME_TYPES = {
 
 const server = http.createServer((req, res) => {
   let reqPath = decodeURIComponent(req.url.split('?')[0]);
+
+  // Handle direct contact form API
+  if (req.method === 'POST' && reqPath === '/api/contact') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        data.receivedAt = new Date().toISOString();
+        data.forwardedTo = 'byteform3@gmail.com';
+        
+        console.log('\n📩 [INCOMING PROJECT BRIEF RECEIVED]');
+        console.log('To: byteform3@gmail.com');
+        console.log('From:', data.name, `<${data.email}>`);
+        console.log('Track:', data.interest || data.track);
+        console.log('Budget:', data.budget);
+        console.log('Brief:', data.message);
+        console.log('------------------------------------\n');
+
+        // Persist to inquiries.json
+        const inquiriesFile = path.join(__dirname, 'inquiries.json');
+        let inquiries = [];
+        if (fs.existsSync(inquiriesFile)) {
+          try {
+            inquiries = JSON.parse(fs.readFileSync(inquiriesFile, 'utf8'));
+          } catch(e) {}
+        }
+        inquiries.push(data);
+        fs.writeFileSync(inquiriesFile, JSON.stringify(inquiries, null, 2), 'utf8');
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, message: 'Brief logged for byteform3@gmail.com' }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
+  if (reqPath === '/estimator' || reqPath === '/estimator.html') {
+    res.writeHead(302, { 'Location': '/' });
+    res.end();
+    return;
+  }
+
   if (reqPath === '/') reqPath = '/index.html';
 
-  const filePath = path.join(__dirname, reqPath);
-  const ext = path.extname(filePath).toLowerCase();
+  let filePath = path.join(__dirname, reqPath);
+  let ext = path.extname(filePath).toLowerCase();
+
+  // If no extension, try serving matching .html file
+  if (!ext && fs.existsSync(filePath + '.html')) {
+    filePath = filePath + '.html';
+    ext = '.html';
+  }
+
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
   fs.readFile(filePath, (err, content) => {

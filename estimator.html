@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="refresh" content="0; url=index.html" />
+    <title>Redirecting to Byteform Home...</title>
+    <script>window.location.replace('index.html');</script>
+
+    <!-- Google Sans / Plus Jakarta Sans Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Website Icon (Favicon & Browser Tab Icon) -->
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/website icon.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/website icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/website icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/website icon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/website icon.png" />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="scroll-progress" class="scroll-progress-bar"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="index.html" class="site-logo" aria-label="Byteform Home">
+          <img src="assets/for dark bg.png" alt="Byteform" class="logo-img logo-dark" />
+          <img src="assets/for light bg.png" alt="Byteform" class="logo-img logo-light" />
+        </a>
+
+        <nav class="nav-links">
+          <a href="capabilities.html" class="nav-link">Capabilities</a>
+          <a href="collective.html" class="nav-link">Collective</a>
+          <a href="protocol.html" class="nav-link">Protocol</a>
+          <a href="reviews.html" class="nav-link">Reviews</a>
+          <a href="estimator.html" class="nav-link active">Estimator</a>
+          <a href="careers.html" class="nav-link">Join Our Team</a>
+        </nav>
+
+        <div class="header-actions">
+          <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme"></button>
+          <a href="#inquiry-form" class="btn btn-primary btn-sm">
+            <span>Submit Brief</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <div class="container">
+          <a href="index.html" class="back-link">&larr; Return to Home Overview</a>
+          
+          <div style="margin-bottom: 1rem;">
+            <span class="pill pill-blue">
+              <span class="dot-indicator"></span>
+              Algorithmic Scope Calculator &middot; Fixed Price Milestones
+            </span>
+          </div>
+
+          <h1 class="hero-tagline">
+            Scope <span class="text-blue">estimator</span>.
+          </h1>
+
+          <p class="hero-description">
+            Configure your technical requirements in real time. We calculate sprint timelines, required founders, and fixed budget ballparks without sales hurdles.
+          </p>
+
+          <div class="wit-callout">
+            "Calculate your budget honestly. We promise not to multiply your estimate by ten just because you have funding."
+          </div>
+        </div>
+      </section>
+
+      <!-- ESTIMATOR SECTION -->
+      <section class="section">
+        <div class="container">
+          
+          <div class="scope-builder-grid">
+            
+            <div class="scope-options-group">
+              <div>
+                <div class="scope-section-label">
+                  <span class="pill pill-blue" style="font-size: 0.7rem; padding: 0.15rem 0.5rem;">Step 1</span>
+                  Select Required Capabilities:
+                </div>
+                <div class="scope-pills-grid">
+                  <div class="scope-pill active" data-id="web" data-price="4500" onclick="toggleScopeService(this)">
+                    <div>
+                      <div class="scope-pill-title">Full Stack Web App</div>
+                      <div class="scope-pill-lead">Systems Lead</div>
+                    </div>
+                    <div class="text-blue" style="font-weight: bold;">✓</div>
+                  </div>
+
+                  <div class="scope-pill active" data-id="uiux" data-price="3000" onclick="toggleScopeService(this)">
+                    <div>
+                      <div class="scope-pill-title">UI UX Design System</div>
+                      <div class="scope-pill-lead">Creative Lead</div>
+                    </div>
+                    <div class="text-blue" style="font-weight: bold;">✓</div>
+                  </div>
+
+                  <div class="scope-pill" data-id="graphic" data-price="2000" onclick="toggleScopeService(this)">
+                    <div>
+                      <div class="scope-pill-title">Branding & Identity</div>
+                      <div class="scope-pill-lead">Creative Lead</div>
+                    </div>
+                    <div class="text-blue" style="font-weight: bold;">✓</div>
+                  </div>
+
+                  <div class="scope-pill" data-id="social" data-price="2200" onclick="toggleScopeService(this)">
+                    <div>
+                      <div class="scope-pill-title">Social Growth Strategy</div>
+                      <div class="scope-pill-lead">Creative & Growth</div>
+                    </div>
+                    <div class="text-blue" style="font-weight: bold;">✓</div>
+                  </div>
+
+                  <div class="scope-pill" data-id="database" data-price="2500" onclick="toggleScopeService(this)">
+                    <div>
+                      <div class="scope-pill-title">Database Architecture</div>
+                      <div class="scope-pill-lead">Systems Lead</div>
+                    </div>
+                    <div class="text-blue" style="font-weight: bold;">✓</div>
+                  </div>
+
+                  <div class="scope-pill" data-id="cloud" data-price="2800" onclick="toggleScopeService(this)">
+                    <div>
+                      <div class="scope-pill-title">Cloud DevOps CI CD</div>
+                      <div class="scope-pill-lead">DevOps Lead</div>
+                    </div>
+                    <div class="text-blue" style="font-weight: bold;">✓</div>
+                  </div>
+
+                  <div class="scope-pill" data-id="gamedev" data-price="5000" onclick="toggleScopeService(this)">
+                    <div>
+                      <div class="scope-pill-title">Realtime 3D WebGL</div>
+                      <div class="scope-pill-lead">3D Lead</div>
+                    </div>
+                    <div class="text-blue" style="font-weight: bold;">✓</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="scope-section-label">
+                  <span class="pill pill-blue" style="font-size: 0.7rem; padding: 0.15rem 0.5rem;">Step 2</span>
+                  Select Build Complexity:
+                </div>
+                <div class="scale-buttons-grid">
+                  <div class="scale-btn" onclick="selectScale(1.0, 'Prototype MVP', this)">
+                    <div class="scale-title">Proof of Concept</div>
+                    <div class="scale-desc">Lean MVP build</div>
+                  </div>
+                  <div class="scale-btn active" onclick="selectScale(1.6, 'Production Build', this)">
+                    <div class="scale-title">Production Build</div>
+                    <div class="scale-desc">Scaled and tested</div>
+                  </div>
+                  <div class="scale-btn" onclick="selectScale(2.2, 'Enterprise Grade', this)">
+                    <div class="scale-title">Enterprise Grade</div>
+                    <div class="scale-desc">High concurrency</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Result Card -->
+            <div class="scope-result-box">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                  <span class="pill pill-blue">
+                    <span class="dot-indicator"></span>
+                    Realtime Calculation
+                  </span>
+                  <span class="font-mono" style="color: var(--text-muted); font-size: 0.8rem;">Direct Founder Rates</span>
+                </div>
+
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.04em;">
+                  Estimated Timeline:
+                </div>
+                <div class="scope-estimate-display">
+                  <span id="scope-weeks">4 to 6</span> <span style="font-size: 0.55em; color: var(--accent-blue);">WEEKS</span>
+                </div>
+
+                <div class="scope-card-summary">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Estimated Range:</span>
+                    <span style="font-size: 0.75rem; color: var(--accent-blue); font-weight: 600;">Fixed Milestones</span>
+                  </div>
+                  <div id="scope-price" class="font-mono" style="font-size: 1.5rem; font-weight: 800; color: var(--accent-blue);">
+                    $10,800 to $13,800
+                  </div>
+                  <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.4rem;">
+                    Fixed price contracts with guaranteed milestone SLAs.
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                  <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">
+                    Assigned Founder Squad:
+                  </span>
+                  <div id="scope-founders" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <span class="pill pill-blue">Systems Lead</span>
+                    <span class="pill pill-blue">Design Lead</span>
+                  </div>
+                </div>
+              </div>
+
+              <button onclick="applyBriefToInquiry()" class="btn btn-primary" style="width: 100%;">
+                <span>Sync Brief to Form Below</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- DIRECT BRIEF SUBMISSION FORM -->
+          <div id="contact" style="margin-top: 5rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 14px; padding: clamp(2rem, 4vw, 3.5rem);">
+            <div class="section-category" style="margin-bottom: 0.5rem;">Direct Submission</div>
+            <h2 style="font-size: clamp(1.8rem, 3vw, 2.5rem); margin-bottom: 0.75rem;">Send this scope to the founders.</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; max-width: 600px;">
+              We review your calculated requirements and respond personally with feasibility, scheduling, and concrete next steps.
+            </p>
+
+            <form id="inquiry-form" style="display: flex; flex-direction: column; gap: 1.25rem;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Your Name *</label>
+                  <input id="form-name" type="text" required placeholder="Alex Vance" class="form-input" />
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Email Address *</label>
+                  <input id="form-email" type="email" required placeholder="alex@company.com" class="form-input" />
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Selected Capabilities</label>
+                <input id="form-services" type="text" placeholder="Full Stack Web App, UI UX System" class="form-input" />
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Project Objectives & Timeline *</label>
+                <textarea id="form-message" required rows="4" placeholder="Calculated details will populate here automatically, or type your brief..." class="form-input" style="resize: vertical; min-height: 110px;"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="padding: 1rem; width: 100%;">
+                <span>Transmit Calculated Brief</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </form>
+
+            <div id="form-success" style="display: none; text-align: center; padding: 2.5rem 1rem;">
+              <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--accent-blue-subtle); color: var(--accent-blue); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; font-size: 24px; font-weight: bold;">
+                ✓
+              </div>
+              <h4 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Transmission Received.</h4>
+              <p style="color: var(--text-secondary); font-size: 0.92rem; max-width: 380px; margin: 0 auto;">
+                The three Byteform founders have received your calculated scope and will respond directly to your inbox within hours.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-col">
+          <a href="index.html" class="site-logo" style="margin-bottom: 1.25rem;">
+            <img src="assets/for dark bg.png" alt="Byteform" class="logo-img logo-dark" />
+            <img src="assets/for light bg.png" alt="Byteform" class="logo-img logo-light" />
+          </a>
+          <p class="footer-desc">
+            Independent digital atelier engineering high impact web applications, cloud native infrastructure, and tactile design systems.
+          </p>
+          <a href="mailto:byteform3@gmail.com" class="footer-email-badge">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+            <span>byteform3@gmail.com</span>
+          </a>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Studio Directory</h4>
+          <ul class="footer-links">
+            <li><a href="capabilities.html" class="footer-link">Capabilities</a></li>
+            <li><a href="collective.html" class="footer-link">Collective</a></li>
+            <li><a href="protocol.html" class="footer-link">Protocol</a></li>
+            <li><a href="reviews.html" class="footer-link">Reviews</a></li>
+            <li><a href="estimator.html" class="footer-link">Estimator</a></li>
+            <li><a href="careers.html" class="footer-link">Join Our Team</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Engineering Standards</h4>
+          <ul class="footer-links">
+            <li><span class="footer-link">Next.js 15 &amp; React</span></li>
+            <li><span class="footer-link">Rust &amp; Node Services</span></li>
+            <li><span class="footer-link">Kubernetes &amp; AWS</span></li>
+            <li><span class="footer-link">Sub 60ms SLA</span></li>
+            <li><span class="footer-link">Zero Outsourcing</span></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Connect &amp; Social</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.94rem; line-height: 1.55;">
+            Follow our design releases, architectural benchmarks, and open roles.
+          </p>
+          <div class="social-links" id="footer-social-links">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Facebook">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              <span>Facebook</span>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.67 1.67 0 1 0 0-3.34 1.67 1.67 0 0 0 0 3.34M7.86 18.5V10.13H5.07V18.5h2.79z"/></svg>
+              <span>LinkedIn</span>
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              <span>Instagram</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="container footer-bottom">
+        <div>
+          &copy; 2026 Byteform Digital Studio &middot; All rights reserved
+        </div>
+        <div style="display: flex; gap: 1.5rem;">
+          <a href="estimator.html" style="color: inherit; text-decoration: none;">Calculate Scope</a>
+          <a href="careers.html" style="color: inherit; text-decoration: none;">We Are Hiring</a>
+          <a href="mailto:byteform3@gmail.com" style="color: inherit; text-decoration: none;">byteform3@gmail.com</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

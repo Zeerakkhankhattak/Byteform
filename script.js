@@ -363,31 +363,125 @@ function initScopeCalculator() {
   calculateScope();
 }
 
-// 7. Contact Form Submission & Email Copy
-function initContactForm() {
-  const form = document.getElementById('inquiry-form');
-  const successBox = document.getElementById('form-success');
+// 7. Contact Form Submission & Email Routing
+function openMailClient(subjectText, bodyText) {
+  const targetEmail = 'byteform3@gmail.com';
+  const sub = encodeURIComponent(subjectText || 'Direct Inquiry for Byteform Founders');
+  const body = encodeURIComponent(bodyText || 'Hello Byteform Founders,\n\nI would like to discuss an engineering project with you.\n\nBest regards,\n');
 
-  if (form) {
+  const mailtoUrl = `mailto:${targetEmail}?subject=${sub}&body=${body}`;
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${sub}&body=${body}`;
+
+  // Launch system default mail app (Apple Mail, Outlook, Thunderbird, Windows Mail)
+  window.location.href = mailtoUrl;
+
+  // Also open Gmail web composer in a new tab for instant browser composing
+  setTimeout(() => {
+    window.open(gmailUrl, '_blank');
+  }, 350);
+}
+
+function handleDirectEmailClick(e) {
+  if (e) e.preventDefault();
+  openMailClient('Direct Inquiry for Byteform Founders', 'Hello Byteform Founders,\n\nI would like to discuss an engineering project with you.\n\nBest regards,\n');
+}
+
+window.openMailClient = openMailClient;
+window.handleDirectEmailClick = handleDirectEmailClick;
+
+function initContactForm() {
+  const forms = [document.getElementById('contact-form'), document.getElementById('inquiry-form')];
+  
+  forms.forEach(form => {
+    if (!form) return;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      form.style.display = 'none';
-      if (successBox) successBox.style.display = 'block';
+
+      const name = (form.querySelector('#contact-name') || form.querySelector('[name="name"]') || {}).value || 'Client';
+      const email = (form.querySelector('#contact-email') || form.querySelector('[name="email"]') || {}).value || '';
+      const interest = (form.querySelector('#contact-interest') || {}).value || 'Full Stack Web Platform';
+      const budget = (form.querySelector('#contact-budget') || {}).value || 'Standard';
+      const message = (form.querySelector('#contact-message') || {}).value || '';
+
+      const feedback = document.getElementById('contact-feedback') || document.getElementById('form-success');
+      const submitBtn = form.querySelector('button[type="submit"]');
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+          <span>Sending Brief...</span>
+        `;
+      }
+
+      // Send to local server / backend logger
+      const payload = { name, email, interest, budget, message };
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
+
+      // Build pre-filled email
+      const emailSubject = `Project Brief from ${name} [${interest}]`;
+      const emailBody = `Sender Name: ${name}\nSender Email: ${email}\nProject Track: ${interest}\nEstimated Investment: ${budget}\n\nProject Scope & Targets:\n${message}\n`;
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=byteform3@gmail.com&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+      const mailtoUrl = `mailto:byteform3@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+      setTimeout(() => {
+        // Trigger mail app
+        window.location.href = mailtoUrl;
+
+        if (submitBtn) {
+          submitBtn.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Brief Transmitted</span>
+          `;
+          submitBtn.style.background = '#10b981';
+          submitBtn.style.borderColor = '#10b981';
+        }
+
+        if (feedback) {
+          feedback.style.display = 'block';
+          feedback.style.color = 'var(--text-primary)';
+          feedback.style.background = 'rgba(16, 185, 129, 0.12)';
+          feedback.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+          feedback.style.padding = '1.2rem 1.4rem';
+          feedback.style.borderRadius = '12px';
+          feedback.style.textAlign = 'left';
+          feedback.innerHTML = `
+            <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem;">
+              ✓ Brief Logged for byteform3@gmail.com
+            </div>
+            <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0.85rem;">
+              Your mail app has been launched. If you prefer to compose in Gmail Web directly, click below:
+            </p>
+            <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+              <span>Open in Gmail Web</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+            </a>
+          `;
+        }
+      }, 600);
     });
-  }
+  });
 }
 
 function copyEmail(btn) {
-  navigator.clipboard.writeText('team@byteform.agency').then(() => {
-    const span = btn.querySelector('span');
+  navigator.clipboard.writeText('byteform3@gmail.com').then(() => {
+    const span = btn ? btn.querySelector('span') : null;
     const orig = span ? span.textContent : 'COPY';
     if (span) span.textContent = 'COPIED';
-    btn.style.color = 'var(--accent-blue)';
-    btn.style.borderColor = 'var(--accent-blue)';
+    if (btn) {
+      btn.style.color = 'var(--accent-blue)';
+      btn.style.borderColor = 'var(--accent-blue)';
+    }
     setTimeout(() => {
       if (span) span.textContent = orig;
-      btn.style.color = '';
-      btn.style.borderColor = '';
+      if (btn) {
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }
     }, 2000);
   });
 }
