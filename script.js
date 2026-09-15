@@ -266,8 +266,62 @@ function initCareersModal() {
 
   // Handle Form Submit
   if (applyForm) {
-    applyForm.addEventListener('submit', (e) => {
+    applyForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const submitBtn = applyForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Submitting Application...</span>';
+      }
+
+      const payload = {
+        name: (document.getElementById('apply-name')?.value || '').trim(),
+        email: (document.getElementById('apply-email')?.value || '').trim(),
+        position: (document.getElementById('apply-role')?.value || 'General Application').trim(),
+        link: (document.getElementById('apply-link')?.value || '').trim(),
+        notes: (document.getElementById('apply-notes')?.value || '').trim(),
+        experience: (document.getElementById('apply-notes')?.value || '').trim(),
+        status: 'New',
+        submittedAt: new Date().toISOString()
+      };
+
+      // 1. Send to local server / fallback endpoint
+      fetch('/api/applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
+
+      // 2. Persist to Firebase Firestore
+      try {
+        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+        const { getFirestore, collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyCqpW-onC0DfN9hmMGXhI1l6501QWLX5NQ",
+          authDomain: "byteform-website.firebaseapp.com",
+          projectId: "byteform-website",
+          storageBucket: "byteform-website.firebasestorage.app",
+          messagingSenderId: "126791292420",
+          appId: "1:126791292420:web:f807ce86d55ea15862c751",
+          measurementId: "G-67RTVMC4NT"
+        };
+        const app = initializeApp(firebaseConfig, "CareersSubmitter");
+        const db = getFirestore(app);
+        await addDoc(collection(db, "applications"), {
+          ...payload,
+          createdAt: serverTimestamp()
+        });
+      } catch (err) {
+        console.warn("Firestore application submission info:", err);
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+      applyForm.reset();
       applyForm.style.display = 'none';
       if (successState) successState.style.display = 'block';
     });

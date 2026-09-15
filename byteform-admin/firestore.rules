@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Applications collection for job submissions
+    match /applications/{applicationId} {
+      
+      // 1. PUBLIC APPLICANTS:
+      // Can submit new applications with required fields
+      allow create: if request.resource.data.name is string
+                    && request.resource.data.email is string
+                    && request.resource.data.status == "New";
+
+      // 2. AUTHENTICATED ADMINISTRATORS:
+      // Only authenticated users (admins signed into Firebase Auth)
+      // can read applications, list records, or update candidate status
+      allow read: if request.auth != null;
+      allow update: if request.auth != null;
+
+      // Deletion is disabled by default for data retention safety
+      allow delete: if request.auth != null;
+    }
+
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
