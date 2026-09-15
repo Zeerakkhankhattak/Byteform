@@ -3,9 +3,6 @@
   "rewrites": [
     { "source": "/admin", "destination": "/byteform-admin/index.html" },
     { "source": "/admin/", "destination": "/byteform-admin/index.html" },
-    { "source": "/admin/:path*", "destination": "/byteform-admin/:path*" },
-    { "source": "/byteform-admin", "destination": "/byteform-admin/index.html" },
-    { "source": "/byteform-admin/", "destination": "/byteform-admin/index.html" },
-    { "source": "/byteform-admin/:path*", "destination": "/byteform-admin/:path*" }
+    { "source": "/admin/:path*", "destination": "/byteform-admin/:path*" }
   ]
 }
