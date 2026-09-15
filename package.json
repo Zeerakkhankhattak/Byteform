@@ -2,7 +2,6 @@
   "name": "byteform",
   "version": "1.0.0",
   "description": "Byteform Digital Atelier",
-  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
