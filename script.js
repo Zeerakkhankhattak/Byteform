@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCareersModal();
   initScopeCalculator();
   initContactForm();
+  initScrollAndClickAnimations();
 });
 
 // 1. Theme Management (Default Dark)
@@ -77,9 +78,18 @@ function initScrollProgress() {
 function scrollToSection(id) {
   const el = document.getElementById(id);
   if (el) {
-    const headerHeight = 84;
+    const headerHeight = 90;
     const pos = el.getBoundingClientRect().top + window.pageYOffset - headerHeight;
     window.scrollTo({ top: pos, behavior: 'smooth' });
+
+    // Target element click fade-in and subtle glow highlight
+    const targetCard = el.querySelector('.brief-form-card') || el.querySelector('.portal-grid') || el;
+    targetCard.classList.remove('section-click-highlight');
+    void targetCard.offsetWidth; // Trigger reflow
+    targetCard.classList.add('section-click-highlight');
+    setTimeout(() => {
+      targetCard.classList.remove('section-click-highlight');
+    }, 850);
   }
 }
 
@@ -266,62 +276,32 @@ function initCareersModal() {
 
   // Handle Form Submit
   if (applyForm) {
-    applyForm.addEventListener('submit', async (e) => {
+    applyForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const submitBtn = applyForm.querySelector('button[type="submit"]');
-      const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>Submitting Application...</span>';
-      }
+      const role = (document.getElementById('apply-role') || {}).value || 'General Application';
+      const name = (document.getElementById('apply-name') || {}).value || '';
+      const email = (document.getElementById('apply-email') || {}).value || '';
+      const link = (document.getElementById('apply-link') || {}).value || '';
+      const notes = (document.getElementById('apply-notes') || {}).value || '';
 
-      const payload = {
-        name: (document.getElementById('apply-name')?.value || '').trim(),
-        email: (document.getElementById('apply-email')?.value || '').trim(),
-        position: (document.getElementById('apply-role')?.value || 'General Application').trim(),
-        link: (document.getElementById('apply-link')?.value || '').trim(),
-        notes: (document.getElementById('apply-notes')?.value || '').trim(),
-        experience: (document.getElementById('apply-notes')?.value || '').trim(),
-        status: 'New',
-        submittedAt: new Date().toISOString()
-      };
-
-      // 1. Send to local server / fallback endpoint
-      fetch('/api/applications', {
+      fetch('https://formsubmit.co/ajax/byteform3@gmail.com', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(() => {});
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          position: role,
+          portfolio_or_linkedin: link,
+          experience_highlights: notes,
+          _subject: `Career Application: ${role} - ${name}`,
+          _captcha: 'false',
+          _template: 'table'
+        })
+      }).catch(() => { });
 
-      // 2. Persist to Firebase Firestore
-      try {
-        const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-        const { getFirestore, collection, addDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-        
-        const firebaseConfig = {
-          apiKey: "AIzaSyCqpW-onC0DfN9hmMGXhI1l6501QWLX5NQ",
-          authDomain: "byteform-website.firebaseapp.com",
-          projectId: "byteform-website",
-          storageBucket: "byteform-website.firebasestorage.app",
-          messagingSenderId: "126791292420",
-          appId: "1:126791292420:web:f807ce86d55ea15862c751",
-          measurementId: "G-67RTVMC4NT"
-        };
-        const app = initializeApp(firebaseConfig, "CareersSubmitter");
-        const db = getFirestore(app);
-        await addDoc(collection(db, "applications"), {
-          ...payload,
-          createdAt: serverTimestamp()
-        });
-      } catch (err) {
-        console.warn("Firestore application submission info:", err);
-      }
-
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnText;
-      }
-      applyForm.reset();
       applyForm.style.display = 'none';
       if (successState) successState.style.display = 'block';
     });
@@ -365,25 +345,37 @@ function calculateScope() {
   const weeksEl = document.getElementById('scope-weeks');
   const priceEl = document.getElementById('scope-price');
 
-  if (weeksEl) weeksEl.textContent = `${weeks} to ${weeks + 2}`;
+  if (weeksEl) {
+    weeksEl.textContent = `${weeks} to ${weeks + 2}`;
+    weeksEl.classList.remove('content-fade-pop');
+    void weeksEl.offsetWidth;
+    weeksEl.classList.add('content-fade-pop');
+  }
   if (priceEl) {
     const low = Math.round(estTotal * 0.9).toLocaleString();
     const high = Math.round(estTotal * 1.15).toLocaleString();
     priceEl.textContent = `$${low} to $${high}`;
+    priceEl.classList.remove('content-fade-pop');
+    void priceEl.offsetWidth;
+    priceEl.classList.add('content-fade-pop');
   }
 
   const squadContainer = document.getElementById('scope-founders');
   if (squadContainer) {
     squadContainer.innerHTML = '';
     if (activeIds.includes('web') || activeIds.includes('database')) {
-      squadContainer.innerHTML += '<span class="pill pill-blue">Systems Lead</span> ';
+      squadContainer.innerHTML += '<span class="pill pill-blue">Systems & Backend Team</span> ';
     }
     if (activeIds.includes('uiux') || activeIds.includes('graphic') || activeIds.includes('social')) {
-      squadContainer.innerHTML += '<span class="pill pill-blue">Design Lead</span> ';
+      squadContainer.innerHTML += '<span class="pill pill-blue">Design & UI Team</span> ';
     }
     if (activeIds.includes('cloud') || activeIds.includes('gamedev')) {
-      squadContainer.innerHTML += '<span class="pill pill-blue">DevOps and 3D Lead</span> ';
+      squadContainer.innerHTML += '<span class="pill pill-blue">Cloud, AI & 3D Team</span> ';
     }
+    squadContainer.innerHTML += '<span class="pill pill-blue">Dedicated Service Manager</span> ';
+    squadContainer.classList.remove('content-fade-pop');
+    void squadContainer.offsetWidth;
+    squadContainer.classList.add('content-fade-pop');
   }
 }
 
@@ -407,7 +399,7 @@ Timeline: ${weeks} Weeks
 Estimated Range: ${price}
 Capabilities: ${activeNames.join(', ')}
 
-Looking forward to connecting with the founders.`;
+Looking forward to connecting with your service management team.`;
   }
 
   scrollToSection('contact');
@@ -420,8 +412,8 @@ function initScopeCalculator() {
 // 7. Contact Form Submission & Email Routing
 function openMailClient(subjectText, bodyText) {
   const targetEmail = 'byteform3@gmail.com';
-  const sub = encodeURIComponent(subjectText || 'Direct Inquiry for Byteform Founders');
-  const body = encodeURIComponent(bodyText || 'Hello Byteform Founders,\n\nI would like to discuss an engineering project with you.\n\nBest regards,\n');
+  const sub = encodeURIComponent(subjectText || 'Project Inquiry - Byteform Service Management');
+  const body = encodeURIComponent(bodyText || 'Hello Byteform Service Team,\n\nI would like to discuss an upcoming engineering project with your service and operational managers.\n\nProject Overview:\n- Timeline:\n- Scope & Requirements:\n\nBest regards,\n');
 
   const mailtoUrl = `mailto:${targetEmail}?subject=${sub}&body=${body}`;
   const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${sub}&body=${body}`;
@@ -437,7 +429,13 @@ function openMailClient(subjectText, bodyText) {
 
 function handleDirectEmailClick(e) {
   if (e) e.preventDefault();
-  openMailClient('Direct Inquiry for Byteform Founders', 'Hello Byteform Founders,\n\nI would like to discuss an engineering project with you.\n\nBest regards,\n');
+  // Redirect to contact/mail section as requested
+  const contactSection = document.getElementById('contact');
+  if (contactSection) {
+    scrollToSection('contact');
+  } else {
+    window.location.href = 'index.html#contact';
+  }
 }
 
 window.openMailClient = openMailClient;
@@ -445,78 +443,132 @@ window.handleDirectEmailClick = handleDirectEmailClick;
 
 function initContactForm() {
   const forms = [document.getElementById('contact-form'), document.getElementById('inquiry-form')];
-  
+
   forms.forEach(form => {
     if (!form) return;
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const name = (form.querySelector('#contact-name') || form.querySelector('[name="name"]') || {}).value || 'Client';
-      const email = (form.querySelector('#contact-email') || form.querySelector('[name="email"]') || {}).value || '';
-      const interest = (form.querySelector('#contact-interest') || {}).value || 'Full Stack Web Platform';
-      const budget = (form.querySelector('#contact-budget') || {}).value || 'Standard';
-      const message = (form.querySelector('#contact-message') || {}).value || '';
+      const name = (form.querySelector('#contact-name') || form.querySelector('#form-name') || form.querySelector('[name="name"]') || {}).value || 'Client';
+      const email = (form.querySelector('#contact-email') || form.querySelector('#form-email') || form.querySelector('[name="email"]') || {}).value || '';
+      const interest = (form.querySelector('#contact-interest') || form.querySelector('#form-services') || form.querySelector('[name="track"]') || {}).value || 'Full Stack Web Platform';
+      const budget = (form.querySelector('#contact-budget') || form.querySelector('[name="budget"]') || {}).value || 'Standard';
+      const message = (form.querySelector('#contact-message') || form.querySelector('#form-message') || form.querySelector('[name="message"]') || {}).value || '';
 
       const feedback = document.getElementById('contact-feedback') || document.getElementById('form-success');
       const submitBtn = form.querySelector('button[type="submit"]');
+      const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
 
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = `
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
-          <span>Sending Brief...</span>
+          <span>Sending Brief to byteform3@gmail.com...</span>
         `;
       }
 
-      // Send to local server / backend logger
-      const payload = { name, email, interest, budget, message };
+      // Send to local server / backend logger if running
+      const payload = { name, email, interest, track: interest, budget, message };
       fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      }).catch(() => {});
+      }).catch(() => { });
 
-      // Build pre-filled email
+      // Build pre-filled email links
       const emailSubject = `Project Brief from ${name} [${interest}]`;
-      const emailBody = `Sender Name: ${name}\nSender Email: ${email}\nProject Track: ${interest}\nEstimated Investment: ${budget}\n\nProject Scope & Targets:\n${message}\n`;
+      const emailBody = `Sender Name: ${name}\nSender Email: ${email}\nProject Track: ${interest}\nBudget: ${budget}\n\nProject Scope & Targets:\n${message}\n`;
       const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=byteform3@gmail.com&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
       const mailtoUrl = `mailto:byteform3@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 
-      setTimeout(() => {
-        // Trigger mail app
-        window.location.href = mailtoUrl;
-
-        if (submitBtn) {
-          submitBtn.innerHTML = `
+      // Dispatch directly to byteform3@gmail.com via FormSubmit endpoint
+      fetch('https://formsubmit.co/ajax/byteform3@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          "Project Track": interest,
+          "Budget": budget,
+          message: message,
+          _subject: `New Project Brief from ${name} [${interest || 'General'}]`,
+          _captcha: 'false',
+          _template: 'table'
+        })
+      })
+        .then(res => res.json().catch(() => ({ success: true })))
+        .then(() => {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
             <span>Brief Transmitted</span>
           `;
-          submitBtn.style.background = '#10b981';
-          submitBtn.style.borderColor = '#10b981';
-        }
+            submitBtn.style.background = '#10b981';
+            submitBtn.style.borderColor = '#10b981';
+          }
 
-        if (feedback) {
-          feedback.style.display = 'block';
-          feedback.style.color = 'var(--text-primary)';
-          feedback.style.background = 'rgba(16, 185, 129, 0.12)';
-          feedback.style.border = '1px solid rgba(16, 185, 129, 0.3)';
-          feedback.style.padding = '1.2rem 1.4rem';
-          feedback.style.borderRadius = '12px';
-          feedback.style.textAlign = 'left';
-          feedback.innerHTML = `
-            <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem;">
-              ✓ Brief Logged for byteform3@gmail.com
+          if (feedback) {
+            feedback.style.display = 'block';
+            feedback.style.color = 'var(--text-primary)';
+            feedback.style.background = 'rgba(16, 185, 129, 0.12)';
+            feedback.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+            feedback.style.padding = '1.25rem 1.4rem';
+            feedback.style.borderRadius = '12px';
+            feedback.style.textAlign = 'left';
+            feedback.innerHTML = `
+            <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Brief Delivered to byteform3@gmail.com</span>
             </div>
             <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0.85rem;">
-              Your mail app has been launched. If you prefer to compose in Gmail Web directly, click below:
+              Thank you, <strong>${name}</strong>! Your project brief has been sent directly to <strong>byteform3@gmail.com</strong>. Our service management team will review your scope and get back to you within a few hours.
+            </p>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                <span>Open in Gmail Web</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+              </a>
+            </div>
+          `;
+          }
+
+          form.reset();
+        })
+        .catch(() => {
+          // Fallback for offline or blocked environments
+          window.location.href = mailtoUrl;
+
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origBtnHtml;
+          }
+
+          if (feedback) {
+            feedback.style.display = 'block';
+            feedback.style.color = 'var(--text-primary)';
+            feedback.style.background = 'rgba(59, 130, 246, 0.12)';
+            feedback.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+            feedback.style.padding = '1.25rem 1.4rem';
+            feedback.style.borderRadius = '12px';
+            feedback.style.textAlign = 'left';
+            feedback.innerHTML = `
+            <div style="font-weight: 700; margin-bottom: 0.4rem; color: var(--accent-blue); font-size: 1rem;">
+              Send Brief to byteform3@gmail.com
+            </div>
+            <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0.85rem;">
+              Click below to send your brief directly to our service management team via Gmail:
             </p>
             <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
               <span>Open in Gmail Web</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
             </a>
           `;
-        }
-      }, 600);
+          }
+        });
     });
   });
 }
@@ -529,6 +581,9 @@ function copyEmail(btn) {
     if (btn) {
       btn.style.color = 'var(--accent-blue)';
       btn.style.borderColor = 'var(--accent-blue)';
+      btn.classList.remove('content-fade-pop');
+      void btn.offsetWidth;
+      btn.classList.add('content-fade-pop');
     }
     setTimeout(() => {
       if (span) span.textContent = orig;
@@ -537,5 +592,116 @@ function copyEmail(btn) {
         btn.style.borderColor = '';
       }
     }, 2000);
+  });
+}
+
+// 8. Scroll-Triggered Reveal & Click Fade-in Animations
+function initScrollAndClickAnimations() {
+  // 1. Initial Hero Stagger Animation on Page Load
+  const heroSection = document.querySelector('.hero-section') || document.querySelector('.page-hero');
+  if (heroSection) {
+    const heroElements = heroSection.querySelectorAll('.pill, .hero-tagline, .hero-description, .hero-cta-group, .hero-metrics, .wit-callout, .back-link');
+    heroElements.forEach((el, index) => {
+      el.classList.add(`hero-anim-${Math.min(index + 1, 5)}`);
+    });
+  }
+
+  // 2. Attach reveal classes to content elements across all pages
+  const revealSelectors = [
+    '.section-header',
+    '.portal-card',
+    '.service-card',
+    '.founder-card',
+    '.protocol-card',
+    '.career-card',
+    '.contact-brief-card',
+    '.brief-form-card',
+    '.wit-callout',
+    '.footer-inner',
+    '.review-card',
+    '.guarantee-item',
+    '.scope-card-summary',
+    '.scope-builder-grid'
+  ];
+
+  document.querySelectorAll('.portal-grid, .services-grid, .founders-grid, .protocol-grid, .careers-grid, .hero-metrics, .studio-guarantees').forEach(grid => {
+    grid.classList.add('reveal-stagger');
+  });
+
+  const elementsToReveal = document.querySelectorAll(revealSelectors.join(', '));
+  elementsToReveal.forEach(el => {
+    if (!el.closest('.hero-section') || el.classList.contains('hero-metrics')) {
+      el.classList.add('reveal-item');
+    }
+  });
+
+  // 3. Intersection Observer for Scroll-Triggered Fade-In
+  if ('IntersectionObserver' in window) {
+    const observerOptions = {
+      root: null,
+      threshold: 0.08,
+      rootMargin: '0px 0px -30px 0px'
+    };
+
+    const scrollObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-item').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        el.classList.add('is-visible');
+      } else {
+        scrollObserver.observe(el);
+      }
+    });
+  } else {
+    document.querySelectorAll('.reveal-item').forEach(el => el.classList.add('is-visible'));
+  }
+
+  // 4. In-page Anchor Clicks Smooth Scroll & Target Glow Fade
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href').replace('#', '');
+      if (targetId) {
+        e.preventDefault();
+        scrollToSection(targetId);
+      }
+    });
+  });
+
+  // 5. Internal Page Navigation Click Fade Transitions
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (
+      href &&
+      !href.startsWith('#') &&
+      !href.startsWith('mailto:') &&
+      !href.startsWith('tel:') &&
+      !href.startsWith('javascript:') &&
+      !link.getAttribute('target') &&
+      (href.endsWith('.html') || href === '/')
+    ) {
+      link.addEventListener('click', function (e) {
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        document.body.classList.add('page-fade-out');
+        setTimeout(() => {
+          window.location.href = href;
+        }, 180);
+      });
+    }
+  });
+
+  // Restore opacity if user navigates back using browser cache
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+      document.body.classList.remove('page-fade-out');
+    }
   });
 }
