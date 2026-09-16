@@ -2,8 +2,10 @@
   "name": "byteform",
   "version": "1.0.0",
   "description": "Byteform Digital Atelier",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "build": "echo 'Static build complete'",
+    "start": "node server.js",
+    "dev": "node server.js",
+    "admin": "node byteform-admin/server.js"
   }
 }
