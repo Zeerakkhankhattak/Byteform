@@ -370,6 +370,15 @@ function initCareersModal() {
         submittedAt: new Date().toISOString()
       };
 
+      const submitBtn = applyForm.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
+          <span>Submitting Application...</span>
+        `;
+      }
+
       // 1. Persist to localStorage for immediate local and cross-tab availability
       try {
         const stored = JSON.parse(localStorage.getItem('byteform_applications') || '[]');
@@ -393,14 +402,33 @@ function initCareersModal() {
         }
       } catch (err) {}
 
-      // 3. Persist to internal API (/api/applications & applications.json)
-      fetch('/api/applications', {
+      // 3. Direct write to Cloud Firestore REST API (cross-device cloud persistence)
+      const firestoreDocId = encodeURIComponent(applicationPayload.id);
+      const firestoreUrl = `https://firestore.googleapis.com/v1/projects/byteform-website/databases/(default)/documents/applications/${firestoreDocId}?key=AIzaSyCqpW-onC0DfN9hmMGXhI1l6501QWLX5NQ`;
+      const firestoreBody = JSON.stringify({
+        fields: {
+          id: { stringValue: applicationPayload.id },
+          name: { stringValue: applicationPayload.name },
+          email: { stringValue: applicationPayload.email },
+          position: { stringValue: applicationPayload.position },
+          link: { stringValue: applicationPayload.link },
+          experience: { stringValue: applicationPayload.experience },
+          status: { stringValue: 'New' },
+          submittedAt: { stringValue: applicationPayload.submittedAt }
+        }
+      });
+      const cloudPromise = fetch(firestoreUrl, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: firestoreBody
+      }).catch(() => {});
+
+      // 4. Persist to internal API (/api/applications)
+      const apiPromise = fetch('/api/applications', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(applicationPayload)
-      }).catch(() => { });
+      }).catch(() => {});
 
       // Also attempt sending to port 3001 if admin is hosted separately locally
       if (window.location.port !== '3001') {
@@ -408,11 +436,11 @@ function initCareersModal() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(applicationPayload)
-        }).catch(() => { });
+        }).catch(() => {});
       }
 
-      // 4. Send email notification via FormSubmit
-      fetch('https://formsubmit.co/ajax/byteform3@gmail.com', {
+      // 5. Send email notification via FormSubmit
+      const emailPromise = fetch('https://formsubmit.co/ajax/byteform3@gmail.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -428,10 +456,13 @@ function initCareersModal() {
           _captcha: 'false',
           _template: 'table'
         })
-      }).catch(() => { });
+      }).catch(() => {});
 
-      applyForm.style.display = 'none';
-      if (successState) successState.style.display = 'block';
+      // Wait for primary requests to dispatch before transitioning UI
+      Promise.allSettled([cloudPromise, apiPromise, emailPromise]).finally(() => {
+        applyForm.style.display = 'none';
+        if (successState) successState.style.display = 'block';
+      });
     });
   }
 }

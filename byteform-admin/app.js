@@ -250,6 +250,25 @@ if (demoModeBtn) {
     } else {
       showToast("Demo Mode active with sample applicant pipeline", "success");
     }
+
+    // Auto-poll for new applications every 15s in Demo Mode
+    if (!window._demoPollInterval) {
+      window._demoPollInterval = setInterval(async () => {
+        if (!isDemoMode) return;
+        const freshApps = await fetchExternalApplications();
+        if (freshApps.length > 0) {
+          const map = new Map();
+          freshApps.forEach(a => map.set(a.id, a));
+          SAMPLE_APPLICATIONS.forEach(s => {
+            if (!map.has(s.id)) map.set(s.id, s);
+          });
+          applicationsData = Array.from(map.values());
+          updateDistinctPositions(applicationsData);
+          updateMetrics(applicationsData);
+          renderApplicationsTable();
+        }
+      }, 15000);
+    }
   });
 }
 

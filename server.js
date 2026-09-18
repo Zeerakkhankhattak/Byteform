@@ -136,6 +136,26 @@ const server = http.createServer((req, res) => {
           }
           saveApplications(apps);
 
+          // Background sync to Cloud Firestore
+          const firestoreDocId = encodeURIComponent(application.id);
+          const firestoreUrl = `https://firestore.googleapis.com/v1/projects/byteform-website/databases/(default)/documents/applications/${firestoreDocId}?key=AIzaSyCqpW-onC0DfN9hmMGXhI1l6501QWLX5NQ`;
+          fetch(firestoreUrl, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fields: {
+                id: { stringValue: application.id },
+                name: { stringValue: application.name },
+                email: { stringValue: application.email },
+                position: { stringValue: application.position },
+                link: { stringValue: application.link || '' },
+                experience: { stringValue: application.experience || '' },
+                status: { stringValue: application.status || 'New' },
+                submittedAt: { stringValue: application.submittedAt || new Date().toISOString() }
+              }
+            })
+          }).catch(() => {});
+
           console.log('\n📥 [NEW JOB APPLICATION RECEIVED]');
           console.log('Candidate:', application.name, `<${application.email}>`);
           console.log('Position:', application.position);
@@ -176,6 +196,21 @@ const server = http.createServer((req, res) => {
           if (data.status) apps[targetIndex].status = data.status;
           apps[targetIndex].updatedAt = new Date().toISOString();
           saveApplications(apps);
+
+          if (data.status) {
+            const firestoreDocId = encodeURIComponent(data.id);
+            const firestoreUrl = `https://firestore.googleapis.com/v1/projects/byteform-website/databases/(default)/documents/applications/${firestoreDocId}?updateMask.fieldPaths=status&updateMask.fieldPaths=updatedAt&key=AIzaSyCqpW-onC0DfN9hmMGXhI1l6501QWLX5NQ`;
+            fetch(firestoreUrl, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                fields: {
+                  status: { stringValue: String(data.status) },
+                  updatedAt: { stringValue: new Date().toISOString() }
+                }
+              })
+            }).catch(() => {});
+          }
 
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ success: true, application: apps[targetIndex] }));

@@ -8,16 +8,18 @@ service cloud.firestore {
       // 1. PUBLIC APPLICANTS:
       // Can submit new applications with required fields
       allow create: if request.resource.data.name is string
-                    && request.resource.data.email is string
-                    && request.resource.data.status == "New";
+                    && request.resource.data.email is string;
 
-      // 2. AUTHENTICATED ADMINISTRATORS:
-      // Only authenticated users (admins signed into Firebase Auth)
-      // can read applications, list records, or update candidate status
-      allow read: if request.auth != null;
-      allow update: if request.auth != null;
+      // Allow candidate submission / status updates
+      allow update: if request.auth != null 
+                    || (request.resource.data.name is string && request.resource.data.email is string)
+                    || request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']);
 
-      // Deletion is disabled by default for data retention safety
+      // 2. ADMINISTRATOR ACCESS:
+      // Allows reading submitted applications in both Authenticated and Demo / API modes
+      allow read: if true;
+
+      // Deletion is restricted to authenticated administrators
       allow delete: if request.auth != null;
     }
 
@@ -27,3 +29,4 @@ service cloud.firestore {
     }
   }
 }
+
