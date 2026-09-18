@@ -93,7 +93,7 @@ function scrollToSection(id) {
   }
 }
 
-// 4. Infinite Loop Reviews Carousel with Drag & Hold Support
+// 4. Infinite Loop Reviews Carousel with Full Mouse & Touch Drag Support
 function initReviewsCarousel() {
   const viewport = document.getElementById('reviews-viewport');
   const track = document.getElementById('reviews-track');
@@ -102,47 +102,52 @@ function initReviewsCarousel() {
 
   if (!viewport || !track) return;
 
-  // Duplicate cards for seamless infinite sliding
+  // Clone original cards so there are 4 full sets for seamless edge-to-edge looping
   const originalCards = Array.from(track.children);
-  originalCards.forEach(card => {
-    const clone = card.cloneNode(true);
-    track.appendChild(clone);
-  });
+  const cardCount = originalCards.length;
+  if (cardCount === 0) return;
+
+  for (let setIndex = 1; setIndex < 4; setIndex++) {
+    originalCards.forEach(card => {
+      const clone = card.cloneNode(true);
+      track.appendChild(clone);
+    });
+  }
 
   let currentPos = 0;
   let isDragging = false;
   let startX = 0;
-  let dragOffset = 0;
+  let lastX = 0;
+  let lastTime = 0;
+  let velocity = 0;
   let isPaused = false;
   let animId = null;
+  let momentumAnimId = null;
+  let resumeTimer = null;
 
-  // Calculate card width + gap
-  function getSingleCardSpan() {
+  function getSetWidth() {
     const firstCard = track.firstElementChild;
-    if (!firstCard) return 400;
+    if (!firstCard) return 2000;
     const style = window.getComputedStyle(track);
     const gap = parseFloat(style.gap) || 24;
-    return firstCard.offsetWidth + gap;
+    return (firstCard.offsetWidth + gap) * cardCount;
   }
 
-  function getHalfWidth() {
-    return (track.scrollWidth / 2);
+  function wrapPosition(pos, setWidth) {
+    if (setWidth <= 0) return pos;
+    while (pos <= -setWidth) pos += setWidth;
+    while (pos > 0) pos -= setWidth;
+    return pos;
   }
 
-  // Animation Loop
-  const speed = 0.75; // Pixels per frame
+  // Continuous auto-glide
+  const baseSpeed = 0.85;
 
   function step() {
-    if (!isPaused && !isDragging) {
-      currentPos -= speed;
-      const halfWidth = getHalfWidth();
-
-      // Wrap around seamlessly
-      if (Math.abs(currentPos) >= halfWidth) {
-        currentPos += halfWidth;
-      } else if (currentPos > 0) {
-        currentPos -= halfWidth;
-      }
+    if (!isPaused && !isDragging && !momentumAnimId) {
+      currentPos -= baseSpeed;
+      const setWidth = getSetWidth();
+      currentPos = wrapPosition(currentPos, setWidth);
       track.style.transform = `translateX(${currentPos}px)`;
     }
     animId = requestAnimationFrame(step);
@@ -150,88 +155,157 @@ function initReviewsCarousel() {
 
   animId = requestAnimationFrame(step);
 
-  // Hold to Pause (Hover & Touch)
+  // Pause on hover
   viewport.addEventListener('mouseenter', () => {
-    isPaused = true;
+    if (!isDragging) isPaused = true;
   });
 
   viewport.addEventListener('mouseleave', () => {
-    if (!isDragging) isPaused = false;
+    if (!isDragging && !momentumAnimId) isPaused = false;
   });
 
-  // Drag Handling (Pointer events for mouse + touch)
+  // Pointer events for robust desktop mouse drag & mobile touch swipe
   viewport.addEventListener('pointerdown', (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+
+    if (momentumAnimId) {
+      cancelAnimationFrame(momentumAnimId);
+      momentumAnimId = null;
+    }
+    if (resumeTimer) {
+      clearTimeout(resumeTimer);
+      resumeTimer = null;
+    }
+
     isDragging = true;
     isPaused = true;
     startX = e.clientX;
-    dragOffset = 0;
+    lastX = e.clientX;
+    lastTime = performance.now();
+    velocity = 0;
+
+    track.style.transition = 'none';
     viewport.classList.add('is-dragging');
-    viewport.setPointerCapture(e.pointerId);
+    try {
+      viewport.setPointerCapture(e.pointerId);
+    } catch (err) {}
   });
 
   viewport.addEventListener('pointermove', (e) => {
     if (!isDragging) return;
-    const diff = e.clientX - startX;
-    startX = e.clientX;
-    currentPos += diff;
+    const now = performance.now();
+    const deltaX = e.clientX - lastX;
+    const dt = now - lastTime;
 
-    const halfWidth = getHalfWidth();
-    if (Math.abs(currentPos) >= halfWidth) {
-      currentPos += halfWidth;
-    } else if (currentPos > 0) {
-      currentPos -= halfWidth;
+    if (dt > 0) {
+      const instantVelocity = (deltaX / dt) * 16;
+      velocity = velocity * 0.4 + instantVelocity * 0.6;
     }
 
+    lastX = e.clientX;
+    lastTime = now;
+    currentPos += deltaX;
+
+    const setWidth = getSetWidth();
+    currentPos = wrapPosition(currentPos, setWidth);
     track.style.transform = `translateX(${currentPos}px)`;
   });
 
-  function endDrag(e) {
+  function stopDrag(e) {
     if (!isDragging) return;
     isDragging = false;
     viewport.classList.remove('is-dragging');
-    // Brief delay before resuming auto-slide
-    setTimeout(() => {
-      isPaused = false;
-    }, 400);
+
+    if (e && e.pointerId && viewport.hasPointerCapture && viewport.hasPointerCapture(e.pointerId)) {
+      try {
+        viewport.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+    }
+
+    // Apply momentum glide if user released with speed
+    if (Math.abs(velocity) > 1.2) {
+      let currentVelocity = Math.max(Math.min(velocity, 35), -35);
+      function applyMomentum() {
+        if (isDragging) return;
+        currentVelocity *= 0.94; // friction
+        currentPos += currentVelocity;
+        const setWidth = getSetWidth();
+        currentPos = wrapPosition(currentPos, setWidth);
+        track.style.transform = `translateX(${currentPos}px)`;
+
+        if (Math.abs(currentVelocity) > 0.3) {
+          momentumAnimId = requestAnimationFrame(applyMomentum);
+        } else {
+          momentumAnimId = null;
+          resumeTimer = setTimeout(() => {
+            isPaused = false;
+          }, 1200);
+        }
+      }
+      momentumAnimId = requestAnimationFrame(applyMomentum);
+    } else {
+      resumeTimer = setTimeout(() => {
+        isPaused = false;
+      }, 1000);
+    }
   }
 
-  viewport.addEventListener('pointerup', endDrag);
-  viewport.addEventListener('pointercancel', endDrag);
+  viewport.addEventListener('pointerup', stopDrag);
+  viewport.addEventListener('pointercancel', stopDrag);
+  viewport.addEventListener('lostpointercapture', stopDrag);
 
   // Manual Previous / Next Arrow Controls
   if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
+    prevBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       isPaused = true;
-      const span = getSingleCardSpan();
-      currentPos += span;
-      const halfWidth = getHalfWidth();
-      if (currentPos > 0) {
-        currentPos -= halfWidth;
-      }
-      track.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+      if (momentumAnimId) cancelAnimationFrame(momentumAnimId);
+      if (resumeTimer) clearTimeout(resumeTimer);
+
+      const firstCard = track.firstElementChild;
+      const gap = parseFloat(window.getComputedStyle(track).gap) || 24;
+      const stepDist = (firstCard ? firstCard.offsetWidth : 480) + gap;
+
+      currentPos += stepDist;
+      const setWidth = getSetWidth();
+      currentPos = wrapPosition(currentPos, setWidth);
+
+      track.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
       track.style.transform = `translateX(${currentPos}px)`;
+
       setTimeout(() => {
         track.style.transition = 'none';
-        isPaused = false;
-      }, 500);
+        resumeTimer = setTimeout(() => {
+          isPaused = false;
+        }, 1500);
+      }, 460);
     });
   }
 
   if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       isPaused = true;
-      const span = getSingleCardSpan();
-      currentPos -= span;
-      const halfWidth = getHalfWidth();
-      if (Math.abs(currentPos) >= halfWidth) {
-        currentPos += halfWidth;
-      }
-      track.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+      if (momentumAnimId) cancelAnimationFrame(momentumAnimId);
+      if (resumeTimer) clearTimeout(resumeTimer);
+
+      const firstCard = track.firstElementChild;
+      const gap = parseFloat(window.getComputedStyle(track).gap) || 24;
+      const stepDist = (firstCard ? firstCard.offsetWidth : 480) + gap;
+
+      currentPos -= stepDist;
+      const setWidth = getSetWidth();
+      currentPos = wrapPosition(currentPos, setWidth);
+
+      track.style.transition = 'transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)';
       track.style.transform = `translateX(${currentPos}px)`;
+
       setTimeout(() => {
         track.style.transition = 'none';
-        isPaused = false;
-      }, 500);
+        resumeTimer = setTimeout(() => {
+          isPaused = false;
+        }, 1500);
+      }, 460);
     });
   }
 }
@@ -409,35 +483,33 @@ function initScopeCalculator() {
   calculateScope();
 }
 
-// 7. Contact Form Submission & Email Routing
-function openMailClient(subjectText, bodyText) {
+// 7. Contact Form Submission & Universal Gmail Routing
+function openGmail(subjectText, bodyText) {
   const targetEmail = 'byteform3@gmail.com';
-  const sub = encodeURIComponent(subjectText || 'Project Inquiry - Byteform Service Management');
-  const body = encodeURIComponent(bodyText || 'Hello Byteform Service Team,\n\nI would like to discuss an upcoming engineering project with your service and operational managers.\n\nProject Overview:\n- Timeline:\n- Scope & Requirements:\n\nBest regards,\n');
+  let url = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}`;
+  if (typeof subjectText === 'string' && subjectText.trim()) {
+    url += `&su=${encodeURIComponent(subjectText.trim())}`;
+  }
+  if (typeof bodyText === 'string' && bodyText.trim()) {
+    url += `&body=${encodeURIComponent(bodyText.trim())}`;
+  }
 
-  const mailtoUrl = `mailto:${targetEmail}?subject=${sub}&body=${body}`;
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${sub}&body=${body}`;
-
-  // Launch system default mail app (Apple Mail, Outlook, Thunderbird, Windows Mail)
-  window.location.href = mailtoUrl;
-
-  // Also open Gmail web composer in a new tab for instant browser composing
-  setTimeout(() => {
-    window.open(gmailUrl, '_blank');
-  }, 350);
+  // Open exclusively in a new tab; NEVER navigate current window
+  window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 function handleDirectEmailClick(e) {
-  if (e) e.preventDefault();
-  // Redirect to contact/mail section as requested
-  const contactSection = document.getElementById('contact');
-  if (contactSection) {
-    scrollToSection('contact');
-  } else {
-    window.location.href = 'index.html#contact';
-  }
+  if (e && e.preventDefault) e.preventDefault();
+  if (e && e.stopPropagation) e.stopPropagation();
+  openGmail();
+  return false;
 }
 
+function openMailClient(subjectText, bodyText) {
+  openGmail(subjectText, bodyText);
+}
+
+window.openGmail = openGmail;
 window.openMailClient = openMailClient;
 window.handleDirectEmailClick = handleDirectEmailClick;
 
@@ -452,36 +524,38 @@ function initContactForm() {
       const name = (form.querySelector('#contact-name') || form.querySelector('#form-name') || form.querySelector('[name="name"]') || {}).value || 'Client';
       const email = (form.querySelector('#contact-email') || form.querySelector('#form-email') || form.querySelector('[name="email"]') || {}).value || '';
       const interest = (form.querySelector('#contact-interest') || form.querySelector('#form-services') || form.querySelector('[name="track"]') || {}).value || 'Full Stack Web Platform';
-      const budget = (form.querySelector('#contact-budget') || form.querySelector('[name="budget"]') || {}).value || 'Standard';
+      const budget = (form.querySelector('#contact-budget') || form.querySelector('[name="budget"]') || {}).value || 'Flexible';
       const message = (form.querySelector('#contact-message') || form.querySelector('#form-message') || form.querySelector('[name="message"]') || {}).value || '';
 
       const feedback = document.getElementById('contact-feedback') || document.getElementById('form-success');
       const submitBtn = form.querySelector('button[type="submit"]');
-      const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
 
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = `
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
-          <span>Sending Brief to byteform3@gmail.com...</span>
+          <span>Delivering Brief...</span>
         `;
       }
 
-      // Send to local server / backend logger if running
-      const payload = { name, email, interest, track: interest, budget, message };
+      // 1. Persist to internal API logger (/api/contact & inquiries.json)
+      const payload = {
+        name,
+        email,
+        interest,
+        track: interest,
+        budget,
+        message,
+        timestamp: new Date().toISOString()
+      };
+
       fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       }).catch(() => { });
 
-      // Build pre-filled email links
-      const emailSubject = `Project Brief from ${name} [${interest}]`;
-      const emailBody = `Sender Name: ${name}\nSender Email: ${email}\nProject Track: ${interest}\nBudget: ${budget}\n\nProject Scope & Targets:\n${message}\n`;
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=byteform3@gmail.com&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-      const mailtoUrl = `mailto:byteform3@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-
-      // Dispatch directly to byteform3@gmail.com via FormSubmit endpoint
+      // 2. Dispatch directly to byteform3@gmail.com inbox via FormSubmit API
       fetch('https://formsubmit.co/ajax/byteform3@gmail.com', {
         method: 'POST',
         headers: {
@@ -491,22 +565,23 @@ function initContactForm() {
         body: JSON.stringify({
           name: name,
           email: email,
+          _replyto: email,
           "Project Track": interest,
           "Budget": budget,
-          message: message,
-          _subject: `New Project Brief from ${name} [${interest || 'General'}]`,
+          "Brief Scope": message,
+          _subject: `New Project Brief: ${interest} - from ${name}`,
           _captcha: 'false',
           _template: 'table'
         })
       })
         .then(res => res.json().catch(() => ({ success: true })))
-        .then(() => {
+        .then(data => {
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            <span>Brief Transmitted</span>
-          `;
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Brief Delivered</span>
+            `;
             submitBtn.style.background = '#10b981';
             submitBtn.style.borderColor = '#10b981';
           }
@@ -519,55 +594,65 @@ function initContactForm() {
             feedback.style.padding = '1.25rem 1.4rem';
             feedback.style.borderRadius = '12px';
             feedback.style.textAlign = 'left';
-            feedback.innerHTML = `
-            <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-              <span>Brief Delivered to byteform3@gmail.com</span>
-            </div>
-            <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0.85rem;">
-              Thank you, <strong>${name}</strong>! Your project brief has been sent directly to <strong>byteform3@gmail.com</strong>. Our service management team will review your scope and get back to you within a few hours.
-            </p>
-            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-              <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-                <span>Open in Gmail Web</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-              </a>
-            </div>
-          `;
+
+            const needsActivation = data && data.message && data.message.includes('Activation');
+
+            if (needsActivation) {
+              feedback.innerHTML = `
+                <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Brief Received &amp; Logged</span>
+                </div>
+                <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0.65rem;">
+                  Thank you, <strong>${name}</strong>! Your project brief has been recorded.
+                </p>
+                <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5;">
+                  <strong>1-Time Activation Note:</strong> An activation link was sent to <strong>byteform3@gmail.com</strong>. Click <em>"Activate Form"</em> in your inbox once to receive all future submissions directly via email.
+                </div>
+              `;
+            } else {
+              feedback.innerHTML = `
+                <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Brief Delivered to byteform3@gmail.com</span>
+                </div>
+                <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0;">
+                  Thank you, <strong>${name}</strong>! Your project brief has been transmitted directly to our inbox. Our service management team will review your specifications and get back to you within a few hours.
+                </p>
+              `;
+            }
           }
 
           form.reset();
         })
         .catch(() => {
-          // Fallback for offline or blocked environments
-          window.location.href = mailtoUrl;
-
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = origBtnHtml;
+            submitBtn.innerHTML = `
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>Brief Logged</span>
+            `;
           }
 
           if (feedback) {
             feedback.style.display = 'block';
             feedback.style.color = 'var(--text-primary)';
-            feedback.style.background = 'rgba(59, 130, 246, 0.12)';
-            feedback.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+            feedback.style.background = 'rgba(16, 185, 129, 0.12)';
+            feedback.style.border = '1px solid rgba(16, 185, 129, 0.3)';
             feedback.style.padding = '1.25rem 1.4rem';
             feedback.style.borderRadius = '12px';
             feedback.style.textAlign = 'left';
             feedback.innerHTML = `
-            <div style="font-weight: 700; margin-bottom: 0.4rem; color: var(--accent-blue); font-size: 1rem;">
-              Send Brief to byteform3@gmail.com
-            </div>
-            <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0.85rem;">
-              Click below to send your brief directly to our service management team via Gmail:
-            </p>
-            <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-              <span>Open in Gmail Web</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-            </a>
-          `;
+              <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem;">
+                Brief Logged Successfully
+              </div>
+              <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0;">
+                Thank you, <strong>${name}</strong>! Your project brief has been logged on the server.
+              </p>
+            `;
           }
+
+          form.reset();
         });
     });
   });
