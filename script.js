@@ -188,7 +188,7 @@ function initReviewsCarousel() {
     viewport.classList.add('is-dragging');
     try {
       viewport.setPointerCapture(e.pointerId);
-    } catch (err) {}
+    } catch (err) { }
   });
 
   viewport.addEventListener('pointermove', (e) => {
@@ -219,7 +219,7 @@ function initReviewsCarousel() {
     if (e && e.pointerId && viewport.hasPointerCapture && viewport.hasPointerCapture(e.pointerId)) {
       try {
         viewport.releasePointerCapture(e.pointerId);
-      } catch (err) {}
+      } catch (err) { }
     }
 
     // Apply momentum glide if user released with speed
@@ -358,111 +358,29 @@ function initCareersModal() {
       const link = (document.getElementById('apply-link') || {}).value || '';
       const notes = (document.getElementById('apply-notes') || {}).value || '';
 
-      const appId = 'app_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-      const applicationPayload = {
-        id: appId,
-        name: name.trim(),
-        email: email.trim(),
-        position: role.trim(),
-        link: link.trim(),
-        experience: notes.trim(),
-        status: 'New',
-        submittedAt: new Date().toISOString()
-      };
+      const accessKey = (applyForm.querySelector('input[name="access_key"]') || {}).value || (typeof getWeb3FormsKey === 'function' ? getWeb3FormsKey() : 'YOUR_ACCESS_KEY_HERE');
 
-      const submitBtn = applyForm.querySelector('button[type="submit"]');
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>
-          <span>Submitting Application...</span>
-        `;
-      }
-
-      // 1. Persist to localStorage for immediate local and cross-tab availability
-      try {
-        const stored = JSON.parse(localStorage.getItem('byteform_applications') || '[]');
-        const existingIdx = stored.findIndex(a => a.id === applicationPayload.id);
-        if (existingIdx >= 0) {
-          stored[existingIdx] = applicationPayload;
-        } else {
-          stored.unshift(applicationPayload);
-        }
-        localStorage.setItem('byteform_applications', JSON.stringify(stored));
-      } catch (err) {}
-
-      // 2. Broadcast to any open Admin Portal tabs via BroadcastChannel
-      try {
-        if (typeof BroadcastChannel !== 'undefined') {
-          const channel = new BroadcastChannel('byteform_applications_channel');
-          channel.postMessage({
-            type: 'NEW_APPLICATION',
-            application: applicationPayload
-          });
-        }
-      } catch (err) {}
-
-      // 3. Direct write to Cloud Firestore REST API (cross-device cloud persistence)
-      const firestoreDocId = encodeURIComponent(applicationPayload.id);
-      const firestoreUrl = `https://firestore.googleapis.com/v1/projects/byteform-website/databases/(default)/documents/applications/${firestoreDocId}?key=AIzaSyCqpW-onC0DfN9hmMGXhI1l6501QWLX5NQ`;
-      const firestoreBody = JSON.stringify({
-        fields: {
-          id: { stringValue: applicationPayload.id },
-          name: { stringValue: applicationPayload.name },
-          email: { stringValue: applicationPayload.email },
-          position: { stringValue: applicationPayload.position },
-          link: { stringValue: applicationPayload.link },
-          experience: { stringValue: applicationPayload.experience },
-          status: { stringValue: 'New' },
-          submittedAt: { stringValue: applicationPayload.submittedAt }
-        }
-      });
-      const cloudPromise = fetch(firestoreUrl, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: firestoreBody
-      }).catch(() => {});
-
-      // 4. Persist to internal API (/api/applications)
-      const apiPromise = fetch('/api/applications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(applicationPayload)
-      }).catch(() => {});
-
-      // Also attempt sending to port 3001 if admin is hosted separately locally
-      if (window.location.port !== '3001') {
-        fetch('http://localhost:3001/api/applications', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(applicationPayload)
-        }).catch(() => {});
-      }
-
-      // 5. Send email notification via FormSubmit
-      const emailPromise = fetch('https://formsubmit.co/ajax/byteform3@gmail.com', {
+      fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
+          access_key: accessKey,
           name: name,
           email: email,
           position: role,
           portfolio_or_linkedin: link,
           experience_highlights: notes,
-          _subject: `Career Application: ${role} - ${name}`,
-          _captcha: 'false',
-          _template: 'table'
+          subject: `Career Application: ${role} - ${name}`,
+          from_name: 'Byteform Careers',
+          botcheck: ''
         })
-      }).catch(() => {});
+      }).catch(() => { });
 
-      // Wait for primary requests to dispatch before transitioning UI
-      Promise.allSettled([cloudPromise, apiPromise, emailPromise]).finally(() => {
-        applyForm.style.display = 'none';
-        if (successState) successState.style.display = 'block';
-      });
+      applyForm.style.display = 'none';
+      if (successState) successState.style.display = 'block';
     });
   }
 }
@@ -525,10 +443,13 @@ function calculateScope() {
     if (activeIds.includes('web') || activeIds.includes('database')) {
       squadContainer.innerHTML += '<span class="pill pill-blue">Systems & Backend Team</span> ';
     }
+    if (activeIds.includes('mobile')) {
+      squadContainer.innerHTML += '<span class="pill pill-blue">Mobile Engineering Team</span> ';
+    }
     if (activeIds.includes('uiux') || activeIds.includes('graphic') || activeIds.includes('social')) {
       squadContainer.innerHTML += '<span class="pill pill-blue">Design & UI Team</span> ';
     }
-    if (activeIds.includes('cloud') || activeIds.includes('gamedev')) {
+    if (activeIds.includes('cloud') || activeIds.includes('gamedev') || activeIds.includes('ai')) {
       squadContainer.innerHTML += '<span class="pill pill-blue">Cloud, AI & 3D Team</span> ';
     }
     squadContainer.innerHTML += '<span class="pill pill-blue">Dedicated Service Manager</span> ';
@@ -568,7 +489,22 @@ function initScopeCalculator() {
   calculateScope();
 }
 
-// 7. Contact Form Submission & Universal Gmail Routing
+// 7. Contact Form Submission & Web3Forms Dispatch
+// Web3Forms Configuration:
+// To route form submissions directly to your inbox, insert your Web3Forms Access Key from https://web3forms.com
+const WEB3FORMS_ACCESS_KEY = '6265ecdb-9cc8-4fa2-a222-8fbb0dee3e64';
+
+function getWeb3FormsKey() {
+  if (typeof window !== 'undefined' && window.WEB3FORMS_ACCESS_KEY && window.WEB3FORMS_ACCESS_KEY !== 'YOUR_ACCESS_KEY_HERE') {
+    return window.WEB3FORMS_ACCESS_KEY;
+  }
+  if (typeof localStorage !== 'undefined') {
+    const stored = localStorage.getItem('web3forms_access_key');
+    if (stored) return stored;
+  }
+  return WEB3FORMS_ACCESS_KEY;
+}
+
 function openGmail(subjectText, bodyText) {
   const targetEmail = 'byteform3@gmail.com';
   let url = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}`;
@@ -583,20 +519,8 @@ function openGmail(subjectText, bodyText) {
   window.open(url, '_blank', 'noopener,noreferrer');
 }
 
-function handleDirectEmailClick(e) {
-  if (e && e.preventDefault) e.preventDefault();
-  if (e && e.stopPropagation) e.stopPropagation();
-  openGmail();
-  return false;
-}
-
-function openMailClient(subjectText, bodyText) {
-  openGmail(subjectText, bodyText);
-}
-
 window.openGmail = openGmail;
-window.openMailClient = openMailClient;
-window.handleDirectEmailClick = handleDirectEmailClick;
+window.getWeb3FormsKey = getWeb3FormsKey;
 
 function initContactForm() {
   const forms = [document.getElementById('contact-form'), document.getElementById('inquiry-form')];
@@ -640,26 +564,31 @@ function initContactForm() {
         body: JSON.stringify(payload)
       }).catch(() => { });
 
-      // 2. Dispatch directly to byteform3@gmail.com inbox via FormSubmit API
-      fetch('https://formsubmit.co/ajax/byteform3@gmail.com', {
+      // 2. Dispatch directly via Web3Forms API
+      const inputKey = (form.querySelector('input[name="access_key"]') || {}).value;
+      const effectiveKey = (inputKey && inputKey !== 'YOUR_ACCESS_KEY_HERE') ? inputKey : getWeb3FormsKey();
+
+      const web3Payload = {
+        access_key: effectiveKey,
+        name: name,
+        email: email,
+        subject: `New Project Brief: ${interest} - from ${name}`,
+        from_name: 'Byteform Project Brief',
+        "Project Track": interest,
+        "Budget": budget,
+        "Brief Scope": message,
+        botcheck: ''
+      };
+
+      fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({
-          name: name,
-          email: email,
-          _replyto: email,
-          "Project Track": interest,
-          "Budget": budget,
-          "Brief Scope": message,
-          _subject: `New Project Brief: ${interest} - from ${name}`,
-          _captcha: 'false',
-          _template: 'table'
-        })
+        body: JSON.stringify(web3Payload)
       })
-        .then(res => res.json().catch(() => ({ success: true })))
+        .then(res => res.json().catch(() => ({ success: false, message: 'Invalid response format' })))
         .then(data => {
           if (submitBtn) {
             submitBtn.disabled = false;
@@ -680,30 +609,32 @@ function initContactForm() {
             feedback.style.borderRadius = '12px';
             feedback.style.textAlign = 'left';
 
-            const needsActivation = data && data.message && data.message.includes('Activation');
-
-            if (needsActivation) {
+            if (data && data.success) {
               feedback.innerHTML = `
                 <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Brief Received &amp; Logged</span>
-                </div>
-                <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0.65rem;">
-                  Thank you, <strong>${name}</strong>! Your project brief has been recorded.
-                </p>
-                <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5;">
-                  <strong>1-Time Activation Note:</strong> An activation link was sent to <strong>byteform3@gmail.com</strong>. Click <em>"Activate Form"</em> in your inbox once to receive all future submissions directly via email.
-                </div>
-              `;
-            } else {
-              feedback.innerHTML = `
-                <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                  <span>Brief Delivered to byteform3@gmail.com</span>
+                  <span>Brief Delivered via Web3Forms</span>
                 </div>
                 <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0;">
-                  Thank you, <strong>${name}</strong>! Your project brief has been transmitted directly to our inbox. Our service management team will review your specifications and get back to you within a few hours.
+                  Thank you, <strong>${name}</strong>! Your project brief has been transmitted to our service team inbox via Web3Forms. We review briefs within two hours during business hours.
                 </p>
+              `;
+            } else {
+              const isKeyError = !effectiveKey || effectiveKey === 'YOUR_ACCESS_KEY_HERE' || (data && data.message && (data.message.toLowerCase().includes('key') || data.message.toLowerCase().includes('access')));
+
+              feedback.innerHTML = `
+                <div style="font-weight: 700; margin-bottom: 0.4rem; color: #10b981; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Brief Logged on Byteform</span>
+                </div>
+                <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: ${isKeyError ? '0.65rem' : '0'};">
+                  Thank you, <strong>${name}</strong>! Your project brief has been recorded safely in the Byteform database.
+                </p>
+                ${isKeyError ? `
+                <div style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.25); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5;">
+                  <strong>Web3Forms Setup:</strong> To receive submissions directly via email, paste your access key from <a href="https://web3forms.com" target="_blank" rel="noopener noreferrer" style="color: var(--accent-blue); text-decoration: underline;">web3forms.com</a> into <code>WEB3FORMS_ACCESS_KEY</code> in <code>script.js</code>.
+                </div>
+                ` : ''}
               `;
             }
           }
@@ -732,7 +663,7 @@ function initContactForm() {
                 Brief Logged Successfully
               </div>
               <p style="font-size: 0.92rem; line-height: 1.55; color: var(--text-secondary); margin-bottom: 0;">
-                Thank you, <strong>${name}</strong>! Your project brief has been logged on the server.
+                Thank you, <strong>${name}</strong>! Your project brief has been recorded.
               </p>
             `;
           }

@@ -130,6 +130,13 @@
             <p>If code breaks at 2 AM you talk to the person who wrote it</p>
           </div>
         </div>
+
+        <!-- Corporate Engineering Atelier Showcase (After Bio) -->
+        <div class="corporate-showcase-container">
+          <div class="corporate-showcase-frame">
+            <img src="assets/corporate-team.jpg" alt="Byteform Corporate Engineering Studio & Technology Architects" class="corporate-showcase-img" loading="lazy" />
+          </div>
+        </div>
       </div>
     </section>
 
@@ -167,8 +174,7 @@
               </div>
               <h3 class="portal-title">Capabilities</h3>
               <p class="portal-desc">
-                Full stack web applications, cloud native infrastructure, UI UX design systems, and realtime 3D
-                engineering. Built for high concurrency without third party excuses.
+                Full stack web &amp; mobile app development, autonomous AI automations, cloud native infrastructure, UI UX design systems, and realtime 3D engineering. Built for high concurrency without third party excuses.
               </p>
             </div>
             <div class="portal-action">
@@ -304,6 +310,13 @@
           </p>
         </div>
 
+        <!-- Corporate Strategic Consultation Showcase (Above Submit Project Brief Section) -->
+        <div class="corporate-showcase-container" style="margin-top: 1.25rem; margin-bottom: 2.75rem;">
+          <div class="corporate-showcase-frame">
+            <img src="assets/corporate-brief.jpg" alt="Byteform Strategic Consultation & Project Brief Review" class="corporate-showcase-img" loading="lazy" />
+          </div>
+        </div>
+
         <div class="contact-layout">
           <!-- Left Card: Studio Dialogue & Direct Coordinates -->
           <div class="contact-brief-card">
@@ -403,11 +416,12 @@
               <p>Tell our team about your targets, timeline, and tech stack requirements.</p>
             </div>
 
-            <form id="contact-form" class="contact-form" action="/api/contact"
+            <form id="contact-form" class="contact-form" action="https://api.web3forms.com/submit"
               method="POST">
-              <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_template" value="table" />
-              <input type="hidden" name="_subject" value="New Project Brief Submission - Byteform" />
+              <input type="hidden" name="access_key" id="contact-access-key" value="6265ecdb-9cc8-4fa2-a222-8fbb0dee3e64" />
+              <input type="hidden" name="subject" value="New Project Brief Submission - Byteform" />
+              <input type="hidden" name="from_name" value="Byteform Project Brief" />
+              <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
 
               <div class="form-grid-2">
                 <div class="form-group">
