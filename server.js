@@ -19,8 +19,21 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
   let reqPath = decodeURIComponent(req.url.split('?')[0]);
 
+  // Handle CORS preflight for API routes
+  if (req.method === 'OPTIONS' && reqPath.startsWith('/api/')) {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400'
+    });
+    res.end();
+    return;
+  }
+
   // Handle direct contact form API
   if (req.method === 'POST' && reqPath === '/api/contact') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
@@ -56,6 +69,123 @@ const server = http.createServer((req, res) => {
       }
     });
     return;
+  }
+
+  // Handle Applications API
+  if (reqPath === '/api/applications') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    const applicationsFile = path.join(__dirname, 'applications.json');
+
+    const readApplications = () => {
+      if (fs.existsSync(applicationsFile)) {
+        try {
+          const raw = fs.readFileSync(applicationsFile, 'utf8');
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+      return [];
+    };
+
+    const saveApplications = (apps) => {
+      fs.writeFileSync(applicationsFile, JSON.stringify(apps, null, 2), 'utf8');
+    };
+
+    if (req.method === 'GET') {
+      const apps = readApplications();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, applications: apps, count: apps.length }));
+      return;
+    }
+
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => body += chunk);
+      req.on('end', () => {
+        try {
+          const data = JSON.parse(body || '{}');
+          if (!data.name || !data.email) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, error: 'Name and email are required.' }));
+            return;
+          }
+
+          const application = {
+            id: data.id || ('app_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)),
+            name: String(data.name).trim(),
+            email: String(data.email).trim(),
+            position: String(data.position || data.role || 'General Application').trim(),
+            link: String(data.link || data.portfolioUrl || '').trim(),
+            experience: String(data.experience || data.notes || data.highlights || '').trim(),
+            status: data.status || 'New',
+            submittedAt: data.submittedAt || new Date().toISOString()
+          };
+
+          const apps = readApplications();
+          // Deduplicate if already exists with same id
+          const existingIndex = apps.findIndex(a => a.id === application.id);
+          if (existingIndex >= 0) {
+            apps[existingIndex] = application;
+          } else {
+            apps.unshift(application);
+          }
+          saveApplications(apps);
+
+          console.log('\n📥 [NEW JOB APPLICATION RECEIVED]');
+          console.log('Candidate:', application.name, `<${application.email}>`);
+          console.log('Position:', application.position);
+          console.log('Profile Link:', application.link || 'None');
+          console.log('Experience Notes:', application.experience ? (application.experience.slice(0, 80) + '...') : 'None');
+          console.log('Status:', application.status);
+          console.log('Submitted At:', application.submittedAt);
+          console.log('------------------------------------\n');
+
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, message: 'Application submitted successfully', application }));
+        } catch (err) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+      });
+      return;
+    }
+
+    if (req.method === 'PATCH' || req.method === 'PUT') {
+      let body = '';
+      req.on('data', chunk => body += chunk);
+      req.on('end', () => {
+        try {
+          const data = JSON.parse(body || '{}');
+          if (!data.id) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, error: 'Application id is required' }));
+            return;
+          }
+          const apps = readApplications();
+          const targetIndex = apps.findIndex(a => a.id === data.id);
+          if (targetIndex === -1) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: false, error: 'Application not found' }));
+            return;
+          }
+          if (data.status) apps[targetIndex].status = data.status;
+          apps[targetIndex].updatedAt = new Date().toISOString();
+          saveApplications(apps);
+
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, application: apps[targetIndex] }));
+        } catch (err) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+      });
+      return;
+    }
   }
 
   if (reqPath === '/estimator' || reqPath === '/estimator.html') {

@@ -233,25 +233,23 @@ if (demoModeBtn) {
     hideLoginError();
     loginScreen.style.display = "none";
     dashboardScreen.style.display = "block";
-    adminUserEmail.textContent = "admin@byteform.agency (Demo)";
-    adminAvatar.textContent = "D";
+    adminUserEmail.textContent = "admin@byteform.agency (Demo / Local)";
+    adminAvatar.textContent = "A";
 
-    let apps = [...SAMPLE_APPLICATIONS];
-    try {
-      const res = await fetch("/api/applications");
-      if (res.ok) {
-        const json = await res.json();
-        if (json.applications && json.applications.length > 0) {
-          apps = [...json.applications, ...SAMPLE_APPLICATIONS];
-        }
-      }
-    } catch (e) {}
+    const externalApps = await fetchExternalApplications();
+    const existingIds = new Set(externalApps.map(a => a.id));
+    const samples = SAMPLE_APPLICATIONS.filter(s => !existingIds.has(s.id));
+    const merged = [...externalApps, ...samples];
 
-    applicationsData = apps;
-    updateDistinctPositions(apps);
-    updateMetrics(apps);
+    applicationsData = merged;
+    updateDistinctPositions(merged);
+    updateMetrics(merged);
     renderApplicationsTable();
-    showToast("Demo Mode active with sample applicant pipeline", "success");
+    if (externalApps.length > 0) {
+      showToast(`Dashboard active: ${externalApps.length} submitted application(s) loaded`, "success");
+    } else {
+      showToast("Demo Mode active with sample applicant pipeline", "success");
+    }
   });
 }
 
@@ -269,43 +267,189 @@ function hideLoginError() {
 }
 
 // ============================================================================
-// 2. FIRESTORE REAL-TIME SYNCHRONIZATION
+// 2. MULTI-LAYER APPLICATIONS SYNCHRONIZATION & REALTIME CHANNELS
 // ============================================================================
+
+// Real-time synchronization channels (Instant cross-tab updates without refresh)
+if (typeof BroadcastChannel !== "undefined") {
+  try {
+    const channel = new BroadcastChannel("byteform_applications_channel");
+    channel.onmessage = (event) => {
+      if (event.data && event.data.type === "NEW_APPLICATION" && event.data.application) {
+        handleIncomingRealtimeApplication(normalizeApplicationObject(event.data.application));
+      }
+    };
+  } catch (e) {}
+}
+
+window.addEventListener("storage", (e) => {
+  if (e.key === "byteform_applications") {
+    syncLocalApplications();
+  }
+});
+
+function handleIncomingRealtimeApplication(newApp) {
+  if (!newApp || !newApp.id) return;
+  const existsIndex = applicationsData.findIndex(a => a.id === newApp.id);
+  if (existsIndex >= 0) {
+    applicationsData[existsIndex] = newApp;
+  } else {
+    applicationsData.unshift(newApp);
+  }
+  updateDistinctPositions(applicationsData);
+  updateMetrics(applicationsData);
+  renderApplicationsTable();
+  showToast(`New candidate applied: ${newApp.name} (${newApp.position})`, "success");
+}
+
+async function syncLocalApplications() {
+  const externalApps = await fetchExternalApplications();
+  if (externalApps.length > 0) {
+    const map = new Map();
+    applicationsData.forEach(a => map.set(a.id, a));
+    externalApps.forEach(a => {
+      if (!map.has(a.id)) {
+        map.set(a.id, a);
+      }
+    });
+    applicationsData = Array.from(map.values());
+    updateDistinctPositions(applicationsData);
+    updateMetrics(applicationsData);
+    renderApplicationsTable();
+  }
+}
+
+async function fetchExternalApplications() {
+  const allApps = [];
+  const seenIds = new Set();
+
+  // 1. Read from localStorage
+  try {
+    const localRaw = localStorage.getItem("byteform_applications");
+    if (localRaw) {
+      const localParsed = JSON.parse(localRaw);
+      if (Array.isArray(localParsed)) {
+        localParsed.forEach(app => {
+          if (app && app.id && !seenIds.has(app.id)) {
+            seenIds.add(app.id);
+            allApps.push(normalizeApplicationObject(app));
+          }
+        });
+      }
+    }
+  } catch (e) {
+    console.warn("Could not read localStorage applications:", e);
+  }
+
+  // 2. Fetch from /api/applications
+  const apiUrls = ["/api/applications"];
+  if (window.location.port === "3001") {
+    apiUrls.push("http://localhost:3000/api/applications");
+  } else if (window.location.port === "3000") {
+    apiUrls.push("http://localhost:3001/api/applications");
+  }
+
+  for (const url of apiUrls) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        const json = await res.json();
+        const list = json.applications || (Array.isArray(json) ? json : []);
+        list.forEach(app => {
+          if (app && app.id && !seenIds.has(app.id)) {
+            seenIds.add(app.id);
+            allApps.push(normalizeApplicationObject(app));
+          }
+        });
+        break;
+      }
+    } catch (e) {}
+  }
+
+  return allApps;
+}
+
+function normalizeApplicationObject(data) {
+  return {
+    id: data.id || ("app_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6)),
+    name: data.name || "Anonymous Applicant",
+    email: data.email || "No email",
+    position: data.position || data.role || "General Application",
+    link: data.link || data.portfolioUrl || "",
+    experience: data.experience || data.notes || data.coverLetter || "No notes provided.",
+    status: normalizeStatus(data.status),
+    submittedAt: data.submittedAt || (data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString())
+  };
+}
 
 function initFirestoreSync() {
   const appsCol = collection(db, "applications");
 
   // Real-time listener on the applications collection
-  unsubscribeSnapshot = onSnapshot(appsCol, (snapshot) => {
-    const apps = [];
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      apps.push({
-        id: docSnap.id,
-        name: data.name || "Anonymous Applicant",
-        email: data.email || "No email",
-        position: data.position || "General Application",
-        link: data.link || data.portfolioUrl || "",
-        experience: data.experience || data.notes || data.coverLetter || "No notes provided.",
-        status: normalizeStatus(data.status),
-        submittedAt: data.submittedAt || (data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString())
+  try {
+    unsubscribeSnapshot = onSnapshot(appsCol, async (snapshot) => {
+      const apps = [];
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        apps.push(normalizeApplicationObject({ ...data, id: docSnap.id }));
       });
-    });
 
-    applicationsData = apps;
-    updateDistinctPositions(apps);
-    updateMetrics(apps);
-    renderApplicationsTable();
-  }, (error) => {
-    console.error("Firestore sync error:", error);
-    showToast("Error syncing applications: " + error.message, "error");
-  });
+      // Merge with API and local storage applications
+      const externalApps = await fetchExternalApplications();
+      const firestoreIds = new Set(apps.map(a => a.id));
+      externalApps.forEach(ext => {
+        if (!firestoreIds.has(ext.id)) {
+          apps.push(ext);
+        }
+      });
+
+      applicationsData = apps;
+      updateDistinctPositions(apps);
+      updateMetrics(apps);
+      renderApplicationsTable();
+    }, async (error) => {
+      console.warn("Firestore sync unavailable, switching to internal API & local storage:", error.message);
+      const externalApps = await fetchExternalApplications();
+      applicationsData = externalApps;
+      updateDistinctPositions(externalApps);
+      updateMetrics(externalApps);
+      renderApplicationsTable();
+      if (externalApps.length > 0) {
+        showToast(`Loaded ${externalApps.length} application(s) from local storage`, "success");
+      }
+    });
+  } catch (err) {
+    console.warn("Firestore error, loading from local API:", err);
+    fetchExternalApplications().then(externalApps => {
+      applicationsData = externalApps;
+      updateDistinctPositions(externalApps);
+      updateMetrics(externalApps);
+      renderApplicationsTable();
+    });
+  }
 }
 
 // Manual Sync Button
 if (refreshDataBtn) {
-  refreshDataBtn.addEventListener("click", () => {
-    showToast("Synchronizing with Firestore...", "success");
+  refreshDataBtn.addEventListener("click", async () => {
+    showToast("Synchronizing applications...", "success");
+    const externalApps = await fetchExternalApplications();
+    if (isDemoMode) {
+      const existingIds = new Set(externalApps.map(a => a.id));
+      const samples = SAMPLE_APPLICATIONS.filter(s => !existingIds.has(s.id));
+      applicationsData = [...externalApps, ...samples];
+    } else if (externalApps.length > 0) {
+      const map = new Map();
+      applicationsData.forEach(a => map.set(a.id, a));
+      externalApps.forEach(a => {
+        if (!map.has(a.id)) {
+          map.set(a.id, a);
+        }
+      });
+      applicationsData = Array.from(map.values());
+    }
+    updateDistinctPositions(applicationsData);
+    updateMetrics(applicationsData);
     renderApplicationsTable();
   });
 }
@@ -627,34 +771,55 @@ if (saveStatusBtn) {
   });
 }
 
-// Update Status in Firestore
+// Update Status across all persistent stores
 async function updateApplicationStatus(appId, newStatus, candidateName) {
-  if (isDemoMode) {
-    const target = applicationsData.find(a => a.id === appId);
-    if (target) target.status = newStatus;
-    updateMetrics(applicationsData);
-    renderApplicationsTable();
-    showToast(`Status for ${candidateName} updated to "${newStatus}" (Demo)`, "success");
-    return;
-  }
+  // 1. Update in-memory state and re-render immediately
+  const target = applicationsData.find(a => a.id === appId);
+  if (target) target.status = newStatus;
+  updateMetrics(applicationsData);
+  renderApplicationsTable();
+
+  // 2. Persist to localStorage
   try {
-    const docRef = doc(db, "applications", appId);
-    await updateDoc(docRef, {
-      status: newStatus,
-      updatedAt: new Date().toISOString()
-    });
+    const stored = JSON.parse(localStorage.getItem("byteform_applications") || "[]");
+    const idx = stored.findIndex(a => a.id === appId);
+    if (idx >= 0) {
+      stored[idx].status = newStatus;
+      stored[idx].updatedAt = new Date().toISOString();
+      localStorage.setItem("byteform_applications", JSON.stringify(stored));
+    }
+  } catch (err) {}
 
-    // Update local state copy
-    const target = applicationsData.find(a => a.id === appId);
-    if (target) target.status = newStatus;
+  // 3. Persist to backend /api/applications via PATCH
+  const patchPayload = JSON.stringify({ id: appId, status: newStatus });
+  fetch("/api/applications", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: patchPayload
+  }).catch(() => {});
 
-    updateMetrics(applicationsData);
-    renderApplicationsTable();
-    showToast(`Status for ${candidateName} updated to "${newStatus}"`, "success");
-  } catch (error) {
-    console.error("Error updating application status:", error);
-    showToast("Failed to update status: " + error.message, "error");
+  if (window.location.port === "3001") {
+    fetch("http://localhost:3000/api/applications", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: patchPayload
+    }).catch(() => {});
   }
+
+  // 4. Try Firestore if not in pure demo mode
+  if (!isDemoMode) {
+    try {
+      const docRef = doc(db, "applications", appId);
+      await updateDoc(docRef, {
+        status: newStatus,
+        updatedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.warn("Firestore status update skipped or unavailable:", error.message);
+    }
+  }
+
+  showToast(`Status for ${candidateName} updated to "${newStatus}"`, "success");
 }
 
 // ============================================================================

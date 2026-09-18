@@ -358,6 +358,60 @@ function initCareersModal() {
       const link = (document.getElementById('apply-link') || {}).value || '';
       const notes = (document.getElementById('apply-notes') || {}).value || '';
 
+      const appId = 'app_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+      const applicationPayload = {
+        id: appId,
+        name: name.trim(),
+        email: email.trim(),
+        position: role.trim(),
+        link: link.trim(),
+        experience: notes.trim(),
+        status: 'New',
+        submittedAt: new Date().toISOString()
+      };
+
+      // 1. Persist to localStorage for immediate local and cross-tab availability
+      try {
+        const stored = JSON.parse(localStorage.getItem('byteform_applications') || '[]');
+        const existingIdx = stored.findIndex(a => a.id === applicationPayload.id);
+        if (existingIdx >= 0) {
+          stored[existingIdx] = applicationPayload;
+        } else {
+          stored.unshift(applicationPayload);
+        }
+        localStorage.setItem('byteform_applications', JSON.stringify(stored));
+      } catch (err) {}
+
+      // 2. Broadcast to any open Admin Portal tabs via BroadcastChannel
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const channel = new BroadcastChannel('byteform_applications_channel');
+          channel.postMessage({
+            type: 'NEW_APPLICATION',
+            application: applicationPayload
+          });
+        }
+      } catch (err) {}
+
+      // 3. Persist to internal API (/api/applications & applications.json)
+      fetch('/api/applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(applicationPayload)
+      }).catch(() => { });
+
+      // Also attempt sending to port 3001 if admin is hosted separately locally
+      if (window.location.port !== '3001') {
+        fetch('http://localhost:3001/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(applicationPayload)
+        }).catch(() => { });
+      }
+
+      // 4. Send email notification via FormSubmit
       fetch('https://formsubmit.co/ajax/byteform3@gmail.com', {
         method: 'POST',
         headers: {
