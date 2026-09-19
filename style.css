@@ -368,10 +368,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
-  align-items: center;
-  gap: clamp(2rem, 5vw, 5.5rem);
+  position: relative;
+  z-index: 2;
+  max-width: min(840px, 64%);
   margin-bottom: clamp(3rem, 5vw, 4.5rem);
 }
 
@@ -405,50 +404,75 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0;
 }
 
-/* Chameleon Natural Stage - Popping out of the right side */
-.hero-chameleon-stage {
-  position: relative;
+/* Robot Peeking Stage - Peeking in from the very right edge of the screen */
+.hero-robot-stage {
+  position: absolute;
+  top: clamp(6.5rem, 11vw, 10.5rem);
+  right: 0;
+  z-index: 4;
   display: flex;
   justify-content: flex-end;
-  align-items: center;
-  z-index: 3;
-  margin-right: clamp(-1rem, -2.5vw, -3rem);
+  align-items: flex-start;
+  pointer-events: none;
 }
 
-.hero-chameleon-img {
-  width: 100%;
-  max-width: 560px;
-  height: auto;
+.hero-robot-img {
+  height: clamp(540px, 48vw, 750px);
+  width: auto;
+  max-height: 85vh;
   display: block;
   user-select: none;
   -webkit-user-drag: none;
-  transform-origin: 80% 60%;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 25px rgba(59, 130, 246, 0.18));
-  animation: chameleon-natural-float 7.5s ease-in-out infinite;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+  pointer-events: auto;
+  cursor: pointer;
+  object-fit: contain;
+  object-position: right top;
+  transform-origin: 100% 40%;
+  mix-blend-mode: normal;
+  filter: drop-shadow(-16px 14px 36px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 35px rgba(59, 130, 246, 0.38));
+  opacity: 0;
+  animation: 
+    robot-fade-peek-in 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards,
+    robot-idle-float 6.5s ease-in-out 1.55s infinite;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
 }
 
-.hero-chameleon-img:hover {
-  transform: translateY(-8px) scale(1.035) rotate(-0.8deg);
-  filter: drop-shadow(0 28px 50px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 35px rgba(59, 130, 246, 0.3));
+.hero-robot-img:hover {
+  transform: translateX(-18px) translateY(-5px) scale(1.025);
+  filter: drop-shadow(-22px 18px 46px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 50px rgba(59, 130, 246, 0.6));
 }
 
-@keyframes chameleon-natural-float {
+@keyframes robot-fade-peek-in {
+  0% {
+    opacity: 0;
+    transform: translateX(110%) rotate(2.5deg);
+  }
+  65% {
+    opacity: 1;
+    transform: translateX(-12px) rotate(-0.8deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes robot-idle-float {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-12px) rotate(-0.8deg);
+    transform: translateY(-11px) rotate(-0.6deg);
   }
 }
 
-/* Light theme natural adjustment */
-[data-theme="light"] .hero-chameleon-img {
-  filter: drop-shadow(0 18px 35px rgba(15, 23, 42, 0.16)) drop-shadow(0 0 20px rgba(0, 82, 255, 0.12));
+/* Light theme robot adjustments - Clean transparent shadow & glow */
+[data-theme="light"] .hero-robot-img {
+  filter: drop-shadow(-12px 12px 28px rgba(0, 0, 0, 0.18)) drop-shadow(0 0 25px rgba(0, 82, 255, 0.28));
 }
 
-[data-theme="light"] .hero-chameleon-img:hover {
-  filter: drop-shadow(0 26px 45px rgba(15, 23, 42, 0.22)) drop-shadow(0 0 30px rgba(0, 82, 255, 0.2));
+[data-theme="light"] .hero-robot-img:hover {
+  filter: drop-shadow(-16px 16px 36px rgba(0, 0, 0, 0.28)) drop-shadow(0 0 35px rgba(0, 82, 255, 0.45));
 }
 
 .hero-metrics {
@@ -1662,24 +1686,35 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Responsive adjustments */
-@media (max-width: 1080px) {
+@media (max-width: 1200px) {
   .hero-layout {
-    grid-template-columns: 1fr;
-    gap: 3rem;
+    max-width: 58%;
   }
-  .hero-description {
-    max-width: 100%;
-  }
-  .hero-chameleon-stage {
-    margin-top: 1rem;
-    max-width: 440px;
-    margin-left: auto;
-    margin-right: auto;
-    justify-content: center;
+  .hero-robot-img {
+    height: clamp(440px, 42vw, 560px);
   }
 }
 
 @media (max-width: 990px) {
+  .hero-layout {
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+  .hero-description {
+    max-width: 100%;
+  }
+  .hero-robot-stage {
+    position: relative;
+    top: auto;
+    right: 0;
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .hero-robot-img {
+    height: clamp(340px, 55vw, 440px);
+  }
   .contact-layout {
     grid-template-columns: 1fr;
     gap: 2.5rem;
@@ -1970,6 +2005,7 @@ body.page-fade-out {
 
 /* Accessibility: respect user reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
+  .hero-robot-img,
   .reveal-item,
   .hero-anim-1, .hero-anim-2, .hero-anim-3, .hero-anim-4, .hero-anim-5,
   .section-click-highlight,
