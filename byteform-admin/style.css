@@ -977,6 +977,9 @@ h1, h2, h3, h4, h5 {
 
 /* Responsive */
 @media (max-width: 768px) {
+  input, select, textarea, .form-input {
+    font-size: 16px !important;
+  }
   .detail-grid {
     grid-template-columns: 1fr;
   }
