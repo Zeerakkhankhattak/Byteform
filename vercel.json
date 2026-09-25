@@ -2,10 +2,6 @@
   "framework": null,
   "buildCommand": "",
   "cleanUrls": true,
-  "redirects": [
-    { "source": "/byteform-admin", "destination": "/admin", "permanent": true },
-    { "source": "/byteform-admin/", "destination": "/admin", "permanent": true }
-  ],
   "headers": [
     {
       "source": "/(.*)\\.css",

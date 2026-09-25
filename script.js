@@ -648,8 +648,14 @@ function calculateScope() {
     if (activeIds.includes('mobile')) {
       squadContainer.innerHTML += '<span class="pill pill-blue">Mobile Engineering Team</span> ';
     }
+    if (activeIds.includes('iot')) {
+      squadContainer.innerHTML += '<span class="pill pill-blue">IoT & Embedded Systems Team</span> ';
+    }
     if (activeIds.includes('uiux') || activeIds.includes('graphic') || activeIds.includes('social') || activeIds.includes('video')) {
       squadContainer.innerHTML += '<span class="pill pill-blue">Design, Video & Motion Team</span> ';
+    }
+    if (activeIds.includes('seo')) {
+      squadContainer.innerHTML += '<span class="pill pill-blue">Technical SEO & Growth Team</span> ';
     }
     if (activeIds.includes('cloud') || activeIds.includes('gamedev') || activeIds.includes('ai')) {
       squadContainer.innerHTML += '<span class="pill pill-blue">Cloud, AI & 3D Team</span> ';
