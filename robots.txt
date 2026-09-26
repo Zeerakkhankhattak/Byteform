@@ -1,0 +1,13 @@
+# https://www.byteform.org/robots.txt
+# Robots exclusion configuration for Byteform Digital Studio
+
+User-agent: *
+Allow: /
+
+# Prevent crawling of backend API endpoints and sensitive data
+Disallow: /api/
+Disallow: /inquiries.json
+Disallow: /*.psd$
+
+# Google Search Console / Search Engine Sitemap
+Sitemap: https://www.byteform.org/sitemap.xml

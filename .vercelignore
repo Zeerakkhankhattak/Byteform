@@ -1,2 +1,8 @@
 server.js
 inquiries.json
+package.json
+package-lock.json
+*.psd
+*.log
+.env*
+.git

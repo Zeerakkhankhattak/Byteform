@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Byteform Digital Studio Sitemap for Google Search Console & Search Engines -->
+  
+  <!-- Home Page -->
+  <url>
+    <loc>https://www.byteform.org/</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Technical Capabilities & Services -->
+  <url>
+    <loc>https://www.byteform.org/capabilities</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- The Collective / Team & Philosophy -->
+  <url>
+    <loc>https://www.byteform.org/collective</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- The Protocol / Sprint Execution Methodology -->
+  <url>
+    <loc>https://www.byteform.org/protocol</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Verified Client Reviews & Perspectives -->
+  <url>
+    <loc>https://www.byteform.org/reviews</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Careers & Opportunities -->
+  <url>
+    <loc>https://www.byteform.org/careers</loc>
+    <lastmod>2026-09-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
