@@ -395,8 +395,17 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1.08;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.25rem;
   max-width: 100%;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
 }
 
 .hero-description {
@@ -494,7 +503,8 @@ h1, h2, h3, h4, h5, h6 {
   border-top: 1px solid var(--border-subtle);
 }
 
-.metric-item h4 {
+.metric-item h4,
+.metric-item .metric-val {
   font-size: clamp(1.85rem, 2.2vw, 2.25rem);
   font-weight: 800;
   color: var(--text-primary);
@@ -547,7 +557,9 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 1.5rem;
 }
 
-.service-card h3 {
+.service-card h2,
+.service-card h3,
+.service-card .service-card-title {
   font-size: 1.45rem;
   margin-bottom: 0.75rem;
   letter-spacing: -0.02em;
@@ -564,6 +576,9 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .service-tag {
@@ -574,6 +589,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 6px;
   color: var(--text-secondary);
   border: 1px solid var(--border-subtle);
+  display: inline-block;
 }
 
 /* Founders Section */
@@ -830,7 +846,8 @@ h1, h2, h3, h4, h5, h6 {
   flex-shrink: 0;
 }
 
-.reviewer-info h5 {
+.reviewer-info h5,
+.reviewer-info .reviewer-name {
   font-size: 1rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -2112,7 +2129,8 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     flex-direction: column;
   }
-  .metric-item h4 {
+  .metric-item h4,
+  .metric-item .metric-val {
     font-size: clamp(1.35rem, 4.4vw, 1.75rem);
     margin-bottom: 0.3rem;
   }
