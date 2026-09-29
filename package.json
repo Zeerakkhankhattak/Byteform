@@ -5,6 +5,8 @@
   "scripts": {
     "build": "node scripts/generate-sitemap.js",
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test": "node scripts/seo-check.js",
+    "test:seo": "node scripts/seo-check.js"
   }
 }
