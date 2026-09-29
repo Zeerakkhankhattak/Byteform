@@ -46,7 +46,77 @@
   <link rel="shortcut icon" type="image/png" href="assets/website icon.png" />
 
   <link rel="stylesheet" href="/style.css?v=2.0" />
-</head>
+
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.byteform.org/#org",
+      "name": "Byteform Digital Studio",
+      "alternateName": "Byteform",
+      "url": "https://www.byteform.org/",
+      "logo": "https://www.byteform.org/assets/for%20dark%20bg.png",
+      "image": "https://www.byteform.org/assets/byteform-og.png",
+      "email": "byteform3@gmail.com",
+      "areaServed": [
+        {
+          "@type": "Country",
+          "name": "Pakistan"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Worldwide"
+        }
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Peshawar",
+        "addressRegion": "Khyber Pakhtunkhwa",
+        "postalCode": "25000",
+        "addressCountry": "PK"
+      },
+      "sameAs": [
+        "https://www.instagram.com/byteform_/",
+        "https://www.facebook.com/profile.php?id=61595005520939",
+        "https://www.linkedin.com/company/byteform/"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://www.byteform.org/process#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.byteform.org/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Process",
+          "item": "https://www.byteform.org/process"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.byteform.org/process#webpage",
+      "url": "https://www.byteform.org/process",
+      "name": "Engineering Process & Delivery Standards | Byteform",
+      "isPartOf": {
+        "@id": "https://www.byteform.org/#website"
+      },
+      "description": "Learn how Byteform delivers software: rigorous technical scoping, transparent sprints, automated testing, zero-downtime deployment, and SLA support."
+    }
+  ]
+}
+    </script>
+  </head>
 
 <body>
   <div id="scroll-progress" class="scroll-progress-bar"></div>

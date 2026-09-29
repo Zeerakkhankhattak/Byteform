@@ -46,7 +46,72 @@
   <link rel="shortcut icon" type="image/png" href="assets/website icon.png" />
 
   <link rel="stylesheet" href="/style.css?v=2.4" />
-</head>
+
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.byteform.org/#org",
+      "name": "Byteform Digital Studio",
+      "alternateName": "Byteform",
+      "url": "https://www.byteform.org/",
+      "logo": "https://www.byteform.org/assets/for%20dark%20bg.png",
+      "image": "https://www.byteform.org/assets/byteform-og.png",
+      "email": "byteform3@gmail.com",
+      "areaServed": [
+        {
+          "@type": "Country",
+          "name": "Pakistan"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Worldwide"
+        }
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Peshawar",
+        "addressRegion": "Khyber Pakhtunkhwa",
+        "postalCode": "25000",
+        "addressCountry": "PK"
+      },
+      "sameAs": [
+        "https://www.instagram.com/byteform_/",
+        "https://www.facebook.com/profile.php?id=61595005520939",
+        "https://www.linkedin.com/company/byteform/"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.byteform.org/#website",
+      "url": "https://www.byteform.org/",
+      "name": "Byteform Digital Studio",
+      "description": "Peshawar-based digital studio building web and mobile apps, AI automations, cloud infrastructure and design systems.",
+      "publisher": {
+        "@id": "https://www.byteform.org/#org"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.byteform.org/#webpage",
+      "url": "https://www.byteform.org/",
+      "name": "Web, App & AI Development Company in Peshawar | Byteform",
+      "isPartOf": {
+        "@id": "https://www.byteform.org/#website"
+      },
+      "about": {
+        "@id": "https://www.byteform.org/#org"
+      },
+      "description": "Byteform is a Peshawar-based digital studio building web and mobile apps, AI automations, cloud infrastructure and design systems. Send us your brief."
+    }
+  ]
+}
+    </script>
+  </head>
 
 <body>
   <div id="scroll-progress" class="scroll-progress-bar"></div>
