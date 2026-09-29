@@ -8,6 +8,8 @@ Allow: /
 Disallow: /api/
 Disallow: /inquiries.json
 Disallow: /*.psd$
+Disallow: /blog/template
+Disallow: /case-studies/template
 
 # Google Search Console / Search Engine Sitemap
 Sitemap: https://www.byteform.org/sitemap.xml

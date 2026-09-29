@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Byteform Digital Atelier",
   "scripts": {
-    "build": "echo 'Static build complete'",
+    "build": "node scripts/generate-sitemap.js",
     "start": "node server.js",
     "dev": "node server.js"
   }

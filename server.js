@@ -355,10 +355,21 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  function serve404(response) {
+    const notFoundPage = path.join(ROOT_DIR, '404.html');
+    if (fs.existsSync(notFoundPage)) {
+      const html = fs.readFileSync(notFoundPage, 'utf8');
+      response.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+      response.end(html);
+    } else {
+      response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      response.end('404 Not Found');
+    }
+  }
+
   // Block access to sensitive files and hidden resources
   if (isBlockedPath(filePath)) {
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('404 Not Found');
+    serve404(res);
     return;
   }
 
@@ -377,8 +388,7 @@ const server = http.createServer((req, res) => {
       }
     }
   } catch (err) {
-    res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('404 Not Found');
+    serve404(res);
     return;
   }
 
@@ -387,13 +397,18 @@ const server = http.createServer((req, res) => {
   fs.readFile(filePath, (err, content) => {
     if (err) {
       if (err.code === 'ENOENT') {
-        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-        res.end('404 Not Found');
+        serve404(res);
       } else {
         res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
         res.end('500 Internal Server Error');
       }
     } else {
+      // Long-term caching for immutable static assets
+      if (reqPath.startsWith('/assets/')) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      } else if (ext === '.html') {
+        res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+      }
       res.writeHead(200, { 'Content-Type': contentType });
       res.end(content);
     }
