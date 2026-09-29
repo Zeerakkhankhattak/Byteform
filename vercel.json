@@ -22,6 +22,8 @@
     { "source": "/assets/for%20light%20bg.png", "destination": "/assets/byteform-logo-light.png", "permanent": true },
     { "source": "/assets/website icon.png", "destination": "/assets/byteform-icon.png", "permanent": true },
     { "source": "/assets/website%20icon.png", "destination": "/assets/byteform-icon.png", "permanent": true },
+    { "source": "/background video.mp4", "destination": "/assets/hero-bg.mp4", "permanent": true },
+    { "source": "/background%20video.mp4", "destination": "/assets/hero-bg.mp4", "permanent": true },
     { "source": "/capabilities.html", "destination": "/services", "permanent": true },
     { "source": "/capabilities", "destination": "/services", "permanent": true },
     { "source": "/collective.html", "destination": "/team", "permanent": true },

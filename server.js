@@ -15,6 +15,8 @@ const MIME_TYPES = {
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
   '.woff2': 'font/woff2',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
   '.xml': 'application/xml; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
 };
@@ -300,6 +302,11 @@ const server = http.createServer((req, res) => {
     res.end();
     return;
   }
+  if (reqPath === '/background video.mp4' || reqPath === '/background%20video.mp4') {
+    res.writeHead(301, { 'Location': '/assets/hero-bg.mp4' });
+    res.end();
+    return;
+  }
   if (reqPath === '/capabilities' || reqPath === '/capabilities.html') {
     res.writeHead(301, { 'Location': '/services' });
     res.end();
@@ -393,6 +400,46 @@ const server = http.createServer((req, res) => {
   }
 
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+
+  // HTTP Range request support for smooth video streaming (Safari/iOS/Chrome)
+  if (ext === '.mp4' || ext === '.webm') {
+    try {
+      const videoStat = fs.statSync(filePath);
+      const fileSize = videoStat.size;
+      const range = req.headers.range;
+
+      if (range) {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        const chunksize = end - start + 1;
+        const fileStream = fs.createReadStream(filePath, { start, end });
+        const headers = {
+          'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunksize,
+          'Content-Type': contentType,
+          'Cache-Control': 'public, max-age=31536000, immutable'
+        };
+        res.writeHead(206, headers);
+        fileStream.pipe(res);
+        return;
+      } else {
+        const headers = {
+          'Content-Length': fileSize,
+          'Accept-Ranges': 'bytes',
+          'Content-Type': contentType,
+          'Cache-Control': 'public, max-age=31536000, immutable'
+        };
+        res.writeHead(200, headers);
+        fs.createReadStream(filePath).pipe(res);
+        return;
+      }
+    } catch (e) {
+      serve404(res);
+      return;
+    }
+  }
 
   fs.readFile(filePath, (err, content) => {
     if (err) {

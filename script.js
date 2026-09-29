@@ -261,17 +261,31 @@ function initMobileNav() {
   });
 }
 
-// 2. Scroll Progress Bar
+// 2. Scroll Progress Bar & Header Glass State
 function initScrollProgress() {
   const bar = document.getElementById('scroll-progress');
-  if (!bar) return;
-  window.addEventListener('scroll', () => {
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    if (total > 0) {
-      const progress = (window.scrollY / total) * 100;
-      bar.style.width = `${progress}%`;
+  const header = document.querySelector('.site-header');
+
+  const onScroll = () => {
+    const scrollY = window.scrollY;
+    if (bar) {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      if (total > 0) {
+        const progress = (scrollY / total) * 100;
+        bar.style.width = `${progress}%`;
+      }
     }
-  });
+    if (header) {
+      if (scrollY > 20) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 }
 
 // 3. Smooth Scroll
@@ -1055,7 +1069,26 @@ function initScrollAndClickAnimations() {
     document.querySelectorAll('.reveal-item').forEach(el => el.classList.add('is-visible'));
   }
 
-  // 4. In-page Anchor Clicks Smooth Scroll & Target Glow Fade
+  // 4. Hero Background Video Power & Playback Optimization
+  const heroVideo = document.querySelector('.hero-bg-video');
+  if (heroVideo) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      heroVideo.pause();
+    } else if ('IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            heroVideo.play().catch(() => {});
+          } else {
+            heroVideo.pause();
+          }
+        });
+      }, { threshold: 0.05 });
+      videoObserver.observe(heroVideo);
+    }
+  }
+
+  // 5. In-page Anchor Clicks Smooth Scroll & Target Glow Fade
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const targetId = this.getAttribute('href').replace('#', '');
