@@ -261,9 +261,53 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Redirect retired estimator route to home
+  // Apex host redirect to canonical www host (byteform.org -> www.byteform.org)
+  const reqHost = (req.headers.host || '').split(':')[0].toLowerCase();
+  if (reqHost === 'byteform.org') {
+    res.writeHead(301, { 'Location': `https://www.byteform.org${req.url}` });
+    res.end();
+    return;
+  }
+
+  // Trailing slash normalization (strip trailing slash from paths other than root '/')
+  if (reqPath.length > 1 && reqPath.endsWith('/')) {
+    const cleanSlashPath = reqPath.slice(0, -1);
+    const queryString = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
+    res.writeHead(301, { 'Location': cleanSlashPath + queryString });
+    res.end();
+    return;
+  }
+
+  // 301 Permanent Redirects for Clean URLs & Legacy Routes
+  if (reqPath === '/index.html') {
+    res.writeHead(301, { 'Location': '/' });
+    res.end();
+    return;
+  }
+  if (reqPath === '/capabilities' || reqPath === '/capabilities.html') {
+    res.writeHead(301, { 'Location': '/services' });
+    res.end();
+    return;
+  }
+  if (reqPath === '/collective' || reqPath === '/collective.html') {
+    res.writeHead(301, { 'Location': '/team' });
+    res.end();
+    return;
+  }
+  if (reqPath === '/protocol' || reqPath === '/protocol.html') {
+    res.writeHead(301, { 'Location': '/process' });
+    res.end();
+    return;
+  }
   if (reqPath === '/estimator' || reqPath === '/estimator.html') {
-    res.writeHead(302, { 'Location': '/' });
+    res.writeHead(301, { 'Location': '/' });
+    res.end();
+    return;
+  }
+  // Redirect direct .html requests to clean URLs
+  if (reqPath.endsWith('.html') && reqPath !== '/index.html') {
+    const cleanPath = reqPath.slice(0, -5);
+    res.writeHead(301, { 'Location': cleanPath });
     res.end();
     return;
   }

@@ -2,6 +2,35 @@
   "framework": null,
   "buildCommand": "",
   "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "byteform.org"
+        }
+      ],
+      "destination": "https://www.byteform.org/$1",
+      "permanent": true
+    },
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/capabilities.html", "destination": "/services", "permanent": true },
+    { "source": "/capabilities", "destination": "/services", "permanent": true },
+    { "source": "/collective.html", "destination": "/team", "permanent": true },
+    { "source": "/collective", "destination": "/team", "permanent": true },
+    { "source": "/protocol.html", "destination": "/process", "permanent": true },
+    { "source": "/protocol", "destination": "/process", "permanent": true },
+    { "source": "/services.html", "destination": "/services", "permanent": true },
+    { "source": "/team.html", "destination": "/team", "permanent": true },
+    { "source": "/process.html", "destination": "/process", "permanent": true },
+    { "source": "/reviews.html", "destination": "/reviews", "permanent": true },
+    { "source": "/careers.html", "destination": "/careers", "permanent": true },
+    { "source": "/contact.html", "destination": "/contact", "permanent": true },
+    { "source": "/estimator.html", "destination": "/", "permanent": true },
+    { "source": "/estimator", "destination": "/", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",

@@ -49,11 +49,12 @@ The application runs with clean URLs (`cleanUrls: true` on Vercel):
 | Route | File | Description |
 |---|---|---|
 | `/` | `index.html` | Studio homepage with hero metrics, capability portals, and brief submission form. |
-| `/capabilities` | `capabilities.html` | In-depth breakdown of engineering disciplines, stacks, and deliverables. |
-| `/collective` | `collective.html` | Engineering philosophy, studio background, and multidisciplinary squads. |
-| `/protocol` | `protocol.html` | Sprint delivery framework: Discovery, Architecture, Sprints, Hardening, and Handover. |
+| `/services` | `services.html` | In-depth breakdown of engineering disciplines, stacks, and deliverables. |
+| `/team` | `team.html` | Engineering philosophy, studio background, and multidisciplinary squads. |
+| `/process` | `process.html` | Sprint delivery framework: Discovery, Architecture, Sprints, Hardening, and Handover. |
 | `/reviews` | `reviews.html` | Verified founder and client testimonials. |
 | `/careers` | `careers.html` | Open positions (DevOps, Full Stack, Video Editor, SEO) with interactive modal application. |
+| `/contact` | `contact.html` | Dedicated contact coordinates and project brief submission interface. |
 | `/sitemap.xml` | `sitemap.xml` | Search console XML sitemap covering all canonical pages. |
 | `/robots.txt` | `robots.txt` | Crawler directive indexing sitemap and shielding private endpoints. |
 
@@ -79,19 +80,20 @@ Byteform/
 ├── api/
 │   └── contact.js          # Vercel serverless function for contact briefs
 ├── assets/                 # Brand logos, dark/light variations, icons, visual assets
-├── capabilities.html       # Technical services and capabilities catalog
 ├── careers.html            # Open engineering and creative roles with application modal
-├── collective.html         # Team structure, squad models, and philosophy
+├── contact.html            # Dedicated contact coordinates and project brief submission
 ├── index.html              # Primary landing page and project brief interface
 ├── inquiries.json          # Local persistence store for submitted briefs (capped)
 ├── package.json            # Project manifest and runner scripts
-├── protocol.html           # Sprint execution methodology and milestones
+├── process.html            # Sprint execution methodology and milestones
 ├── reviews.html            # Verified founder testimonials and case reviews
 ├── robots.txt              # Search engine directives and sitemap pointer
 ├── script.js               # Theme engine, navigation drawer, form handlers, animations
 ├── server.js               # Standalone Node.js server with path traversal and rate-limit defenses
+├── services.html           # Technical services and capabilities catalog
 ├── sitemap.xml             # Canonical XML sitemap for Google Search Console
 ├── style.css               # Bespoke design system, dark/light tokens, responsive layout
+├── team.html               # Team structure, squad models, and philosophy
 ├── vercel.json             # Vercel routing, clean URLs, and edge HTTP security headers
 └── .vercelignore           # Deployment shield for sensitive files and assets
 ```

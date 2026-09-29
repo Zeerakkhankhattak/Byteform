@@ -116,7 +116,7 @@ function initMobileNav() {
       <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop"></div>
       <div class="mobile-drawer-panel">
         <div class="mobile-drawer-header">
-          <a href="index.html" class="site-logo" aria-label="Byteform Home">
+          <a href="/" class="site-logo" aria-label="Byteform Home">
             <img src="assets/for dark bg.png" alt="Byteform" class="logo-img logo-dark" style="height: 32px;" />
             <img src="assets/for light bg.png" alt="Byteform" class="logo-img logo-light" style="height: 32px;" />
           </a>
@@ -131,41 +131,41 @@ function initMobileNav() {
         <div class="mobile-drawer-body">
           <div class="mobile-nav-category">Studio Navigation</div>
           <nav class="mobile-nav-list">
-            <a href="index.html" class="mobile-nav-item" data-path="index.html">
+            <a href="/" class="mobile-nav-item" data-path="/">
               <span class="mobile-nav-num">01</span>
               <span class="mobile-nav-text">Home</span>
             </a>
-            <a href="capabilities.html" class="mobile-nav-item" data-path="capabilities.html">
+            <a href="/services" class="mobile-nav-item" data-path="/services">
               <span class="mobile-nav-num">02</span>
-              <span class="mobile-nav-text">Capabilities</span>
+              <span class="mobile-nav-text">Services</span>
             </a>
-            <a href="collective.html" class="mobile-nav-item" data-path="collective.html">
+            <a href="/team" class="mobile-nav-item" data-path="/team">
               <span class="mobile-nav-num">03</span>
-              <span class="mobile-nav-text">Collective</span>
+              <span class="mobile-nav-text">Team</span>
             </a>
-            <a href="protocol.html" class="mobile-nav-item" data-path="protocol.html">
+            <a href="/process" class="mobile-nav-item" data-path="/process">
               <span class="mobile-nav-num">04</span>
-              <span class="mobile-nav-text">Protocol</span>
+              <span class="mobile-nav-text">Process</span>
             </a>
-            <a href="reviews.html" class="mobile-nav-item" data-path="reviews.html">
+            <a href="/reviews" class="mobile-nav-item" data-path="/reviews">
               <span class="mobile-nav-num">05</span>
               <span class="mobile-nav-text">Reviews</span>
             </a>
-            <a href="careers.html" class="mobile-nav-item" data-path="careers.html">
+            <a href="/careers" class="mobile-nav-item" data-path="/careers">
               <span class="mobile-nav-num">06</span>
               <span class="mobile-nav-text">Careers</span>
             </a>
           </nav>
 
           <div class="mobile-drawer-cta">
-            <a href="index.html#contact" class="btn btn-primary" style="width: 100%; justify-content: center;" id="mobile-drawer-brief-btn">
+            <a href="/#contact" class="btn btn-primary" style="width: 100%; justify-content: center;" id="mobile-drawer-brief-btn">
               <span>Start Project Brief</span>
             </a>
           </div>
 
           <div class="mobile-drawer-footer">
             <div class="mobile-drawer-contact-title">Direct Service Coordinates</div>
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=byteform3@gmail.com" target="_blank" rel="noopener noreferrer" class="mobile-drawer-email">
+            <a href="mailto:byteform3@gmail.com" class="mobile-drawer-email">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
@@ -180,7 +180,7 @@ function initMobileNav() {
               <a href="https://www.facebook.com/profile.php?id=61595005520939" target="_blank" rel="noopener noreferrer" class="mobile-social-icon" aria-label="Facebook">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
               </a>
-              <a href="https://www.linkedin.com/company/byteform/?viewAsMember=true" target="_blank" rel="noopener noreferrer" class="mobile-social-icon" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/company/byteform/" target="_blank" rel="noopener noreferrer" class="mobile-social-icon" aria-label="LinkedIn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.67 1.67 0 1 0 0-3.34 1.67 1.67 0 0 0 0 3.34M7.86 18.5V10.13H5.07V18.5h2.79z"/></svg>
               </a>
               <a href="https://wa.me/923711292921" target="_blank" rel="noopener noreferrer" class="mobile-social-icon" aria-label="WhatsApp">
@@ -195,10 +195,10 @@ function initMobileNav() {
   }
 
   // 3. Mark current page active in drawer
-  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  const normalizedCurrent = window.location.pathname.replace(/\/$/, '') || '/';
   drawer.querySelectorAll('.mobile-nav-item').forEach(link => {
-    const targetPath = link.getAttribute('data-path');
-    if (currentPath === targetPath || (currentPath === '' && targetPath === 'index.html')) {
+    const targetPath = (link.getAttribute('href') || '').replace(/\/$/, '') || '/';
+    if (normalizedCurrent === targetPath) {
       link.classList.add('active');
     } else {
       link.classList.remove('active');
@@ -1011,8 +1011,11 @@ function initScrollAndClickAnimations() {
       !href.startsWith('mailto:') &&
       !href.startsWith('tel:') &&
       !href.startsWith('javascript:') &&
+      !href.startsWith('http://') &&
+      !href.startsWith('https://') &&
+      !href.startsWith('//') &&
       !link.getAttribute('target') &&
-      (href.endsWith('.html') || href === '/')
+      (href.startsWith('/') || href.endsWith('.html'))
     ) {
       link.addEventListener('click', function (e) {
         if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;

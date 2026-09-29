@@ -5,48 +5,56 @@
   <!-- Home Page -->
   <url>
     <loc>https://www.byteform.org/</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Technical Capabilities & Services -->
+  <!-- Technical Engineering Services -->
   <url>
-    <loc>https://www.byteform.org/capabilities</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://www.byteform.org/services</loc>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- The Collective / Team & Philosophy -->
+  <!-- The Team & Engineering Philosophy -->
   <url>
-    <loc>https://www.byteform.org/collective</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://www.byteform.org/team</loc>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- The Protocol / Sprint Execution Methodology -->
+  <!-- Delivery Process & Sprint Methodology -->
   <url>
-    <loc>https://www.byteform.org/protocol</loc>
-    <lastmod>2026-09-27</lastmod>
+    <loc>https://www.byteform.org/process</loc>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Verified Client Reviews & Perspectives -->
+  <!-- Verified Client Reviews & Case Studies -->
   <url>
     <loc>https://www.byteform.org/reviews</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Careers & Opportunities -->
+  <!-- Careers & Open Roles -->
   <url>
     <loc>https://www.byteform.org/careers</loc>
-    <lastmod>2026-09-27</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <!-- Direct Contact & Project Brief -->
+  <url>
+    <loc>https://www.byteform.org/contact</loc>
+    <lastmod>2026-09-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
