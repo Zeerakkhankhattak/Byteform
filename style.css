@@ -2838,3 +2838,35 @@ body.page-fade-out {
   color: var(--text-primary);
   font-weight: 600;
 }
+
+/* Verified Reviewer Profiles & Social Links */
+.reviewer-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.reviewer-company-link {
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+
+.reviewer-company-link:hover {
+  color: var(--accent-blue);
+}
+
+.reviewer-social-link {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.35rem;
+  color: var(--text-muted);
+  vertical-align: middle;
+  transition: color 0.2s ease;
+}
+
+.reviewer-social-link:hover {
+  color: var(--accent-blue);
+}

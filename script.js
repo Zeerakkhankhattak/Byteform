@@ -3,6 +3,26 @@
    Interactive Behaviors & Feature Logic
 */
 
+// Central Studio Configuration
+// TODO(owner): replace byteform3@gmail.com with custom domain email (e.g. hello@byteform.org)
+const BYTEFORM_CONFIG = {
+  LEGAL_NAME: 'Byteform Digital Studio',
+  SHORT_NAME: 'Byteform',
+  EMAIL: 'byteform3@gmail.com',
+  PHONE: '+923711292921',
+  WHATSAPP_URL: 'https://wa.me/923711292921',
+  CITY: 'Peshawar',
+  REGION: 'Khyber Pakhtunkhwa',
+  COUNTRY: 'PK',
+  POSTAL_CODE: '25000',
+  SOCIALS: {
+    INSTAGRAM: 'https://www.instagram.com/byteform_/',
+    FACEBOOK: 'https://www.facebook.com/profile.php?id=61595005520939',
+    LINKEDIN: 'https://www.linkedin.com/company/byteform/'
+  }
+};
+window.BYTEFORM_CONFIG = BYTEFORM_CONFIG;
+
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initMobileZoomPrevention();
@@ -303,6 +323,41 @@ function initReviewsCarousel() {
   const nextBtn = document.getElementById('reviews-next');
 
   if (!viewport || !track) return;
+
+  // Support optional reviewer verification fields (company URL, LinkedIn URL, photo URL)
+  // Data structure schema: { companyUrl?: string, linkedinUrl?: string, photoUrl?: string }
+  track.querySelectorAll('.review-card').forEach(card => {
+    const meta = card.querySelector('.reviewer-meta');
+    if (!meta) return;
+    const companyUrl = meta.getAttribute('data-company-url');
+    const linkedinUrl = meta.getAttribute('data-linkedin-url');
+    const photoUrl = meta.getAttribute('data-photo-url');
+    const info = meta.querySelector('.reviewer-info');
+
+    if (photoUrl) {
+      const avatar = meta.querySelector('.reviewer-avatar');
+      if (avatar) {
+        avatar.innerHTML = `<img src="${photoUrl}" alt="${info ? info.querySelector('.reviewer-name')?.textContent || 'Reviewer' : 'Reviewer'}" class="reviewer-photo" loading="lazy" />`;
+      }
+    }
+
+    if (linkedinUrl && info) {
+      const nameEl = info.querySelector('.reviewer-name');
+      if (nameEl && !nameEl.querySelector('.reviewer-social-link')) {
+        nameEl.insertAdjacentHTML('beforeend', ` <a href="${linkedinUrl}" target="_blank" rel="noopener noreferrer" class="reviewer-social-link" aria-label="Verified LinkedIn Profile"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.67 1.67 0 1 0 0-3.34 1.67 1.67 0 0 0 0 3.34M7.86 18.5V10.13H5.07V18.5h2.79z"/></svg></a>`);
+      }
+    }
+
+    if (companyUrl && info) {
+      const span = info.querySelector('span');
+      if (span && !span.querySelector('a')) {
+        const parts = span.textContent.split('·');
+        if (parts.length > 1) {
+          span.innerHTML = `${parts[0].trim()} &middot; <a href="${companyUrl}" target="_blank" rel="noopener noreferrer" class="reviewer-company-link">${parts[1].trim()}</a>`;
+        }
+      }
+    }
+  });
 
   // Clone original cards so there are 4 full sets for seamless edge-to-edge looping
   const originalCards = Array.from(track.children);
@@ -713,21 +768,24 @@ function getWeb3FormsKey() {
   return WEB3FORMS_ACCESS_KEY;
 }
 
-function openGmail(subjectText, bodyText) {
-  const targetEmail = 'byteform3@gmail.com';
-  let url = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}`;
+function openEmailClient(subjectText, bodyText) {
+  let url = `mailto:${BYTEFORM_CONFIG.EMAIL}`;
+  const params = [];
   if (typeof subjectText === 'string' && subjectText.trim()) {
-    url += `&su=${encodeURIComponent(subjectText.trim())}`;
+    params.push(`subject=${encodeURIComponent(subjectText.trim())}`);
   }
   if (typeof bodyText === 'string' && bodyText.trim()) {
-    url += `&body=${encodeURIComponent(bodyText.trim())}`;
+    params.push(`body=${encodeURIComponent(bodyText.trim())}`);
   }
-
-  // Open exclusively in a new tab; NEVER navigate current window
-  window.open(url, '_blank', 'noopener,noreferrer');
+  if (params.length > 0) {
+    url += `?${params.join('&')}`;
+  }
+  window.location.href = url;
 }
 
-window.openGmail = openGmail;
+// Preserve backwards-compatible aliases
+window.openEmailClient = openEmailClient;
+window.openGmail = openEmailClient;
 window.getWeb3FormsKey = getWeb3FormsKey;
 
 function initContactForm() {
@@ -901,7 +959,7 @@ function initContactForm() {
 }
 
 function copyEmail(btn) {
-  navigator.clipboard.writeText('byteform3@gmail.com').then(() => {
+  navigator.clipboard.writeText(BYTEFORM_CONFIG.EMAIL).then(() => {
     const span = btn ? btn.querySelector('span') : null;
     const orig = span ? span.textContent : 'COPY';
     if (span) span.textContent = 'COPIED';
