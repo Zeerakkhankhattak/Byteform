@@ -25,7 +25,6 @@ window.BYTEFORM_CONFIG = BYTEFORM_CONFIG;
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
-  initMobileZoomPrevention();
   initMobileNav();
   initScrollProgress();
   initReviewsCarousel();
@@ -81,27 +80,6 @@ function updateThemeIcon(theme) {
     `;
     toggleBtn.setAttribute('title', 'Switch to dark theme');
   }
-}
-
-// 1B. Mobile Zoom Prevention & Touch Experience Optimization
-function initMobileZoomPrevention() {
-  // Prevent accidental pinch zoom gestures
-  document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
-  document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
-  document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
-
-  // Prevent double tap to zoom on touch devices while preserving tap responsiveness
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', (e) => {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-      if (tag !== 'input' && tag !== 'textarea' && tag !== 'select') {
-        e.preventDefault();
-      }
-    }
-    lastTouchEnd = now;
-  }, { passive: false });
 }
 
 // 1C. Mobile Navigation Drawer & Hamburger Menu System
@@ -564,6 +542,34 @@ function initReviewsCarousel() {
         }, 1500);
       }, 460);
     });
+  }
+
+  // Respect prefers-reduced-motion
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) isPaused = true;
+
+  // Pause carousel animation when off-screen using IntersectionObserver
+  if ('IntersectionObserver' in window) {
+    const carouselObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        isPaused = !entry.isIntersecting || prefersReducedMotion;
+      });
+    }, { threshold: 0.05 });
+    carouselObserver.observe(viewport);
+
+    // Pause tech marquee tracks when off-screen
+    const marqueeContainer = document.querySelector('.tech-marquee-container');
+    if (marqueeContainer) {
+      const tracks = marqueeContainer.querySelectorAll('.tech-marquee-track');
+      const marqueeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          tracks.forEach(t => {
+            t.style.animationPlayState = entry.isIntersecting && !prefersReducedMotion ? 'running' : 'paused';
+          });
+        });
+      }, { threshold: 0.05 });
+      marqueeObserver.observe(marqueeContainer);
+    }
   }
 }
 

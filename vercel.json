@@ -16,6 +16,12 @@
       "permanent": true
     },
     { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/assets/for dark bg.png", "destination": "/assets/byteform-logo-dark.png", "permanent": true },
+    { "source": "/assets/for%20dark%20bg.png", "destination": "/assets/byteform-logo-dark.png", "permanent": true },
+    { "source": "/assets/for light bg.png", "destination": "/assets/byteform-logo-light.png", "permanent": true },
+    { "source": "/assets/for%20light%20bg.png", "destination": "/assets/byteform-logo-light.png", "permanent": true },
+    { "source": "/assets/website icon.png", "destination": "/assets/byteform-icon.png", "permanent": true },
+    { "source": "/assets/website%20icon.png", "destination": "/assets/byteform-icon.png", "permanent": true },
     { "source": "/capabilities.html", "destination": "/services", "permanent": true },
     { "source": "/capabilities", "destination": "/services", "permanent": true },
     { "source": "/collective.html", "destination": "/team", "permanent": true },

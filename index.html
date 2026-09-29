@@ -39,11 +39,11 @@
     rel="stylesheet" />
 
   <!-- Website Icon (Favicon & Browser Tab Icon) -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/website icon.png" />
-  <link rel="icon" type="image/png" sizes="64x64" href="assets/website icon.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/website icon.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/website icon.png" />
-  <link rel="shortcut icon" type="image/png" href="assets/website icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/byteform-icon.png" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/assets/byteform-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/byteform-icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/byteform-icon.png" />
+  <link rel="shortcut icon" type="image/png" href="/assets/byteform-icon.png" />
 
   <link rel="stylesheet" href="/style.css?v=2.4" />
 
@@ -59,7 +59,7 @@
       "name": "Byteform Digital Studio",
       "alternateName": "Byteform",
       "url": "https://www.byteform.org/",
-      "logo": "https://www.byteform.org/assets/for%20dark%20bg.png",
+      "logo": "https://www.byteform.org/assets/byteform-logo-dark.png",
       "image": "https://www.byteform.org/assets/byteform-og.png",
       "email": "byteform3@gmail.com",
       "areaServed": [
@@ -120,8 +120,8 @@
   <header class="site-header">
     <div class="container header-inner">
       <a href="/" class="site-logo" aria-label="Byteform Home">
-        <img src="assets/for dark bg.png" alt="Byteform" class="logo-img logo-dark" />
-        <img src="assets/for light bg.png" alt="Byteform" class="logo-img logo-light" />
+        <img src="/assets/byteform-logo-dark.png" alt="Byteform Digital Studio" class="logo-img logo-dark" width="240" height="80" decoding="async" />
+          <img src="/assets/byteform-logo-light.png" alt="" class="logo-img logo-light" width="240" height="80" decoding="async" aria-hidden="true" />
       </a>
 
       <nav class="nav-links">
@@ -161,7 +161,10 @@
     <section class="hero-section">
       <!-- Robot Peeking from Right Edge of Screen -->
       <div class="hero-robot-stage" aria-label="Byteform Robot">
-        <img src="assets/robot.png" alt="Byteform Robot" class="hero-robot-img" />
+        <picture>
+            <source srcset="/assets/robot.webp" type="image/webp" />
+            <img src="/assets/robot.png" alt="Byteform mascot 3D robot peering into the viewport" class="hero-robot-img" width="585" height="1136" fetchpriority="high" decoding="async" />
+          </picture>
       </div>
 
       <div class="container">
@@ -226,7 +229,10 @@
         <!-- Corporate Engineering Atelier Showcase (After Bio) -->
         <div class="corporate-showcase-container">
           <div class="corporate-showcase-frame">
-            <img src="assets/corporate-team.jpg" alt="Byteform Corporate Engineering Studio & Technology Architects" class="corporate-showcase-img" loading="lazy" />
+            <picture>
+              <source srcset="/assets/corporate-team.webp" type="image/webp" />
+              <img src="/assets/corporate-team.jpg" alt="Byteform engineering squad and systems architects in Peshawar studio" class="corporate-showcase-img" width="1376" height="768" loading="lazy" decoding="async" />
+            </picture>
           </div>
         </div>
       </div>
@@ -405,7 +411,10 @@
         <!-- Corporate Strategic Consultation Showcase (Above Submit Project Brief Section) -->
         <div class="corporate-showcase-container" style="margin-top: 1.25rem; margin-bottom: 2.75rem;">
           <div class="corporate-showcase-frame">
-            <img src="assets/corporate-brief.jpg" alt="Byteform Strategic Consultation & Project Brief Review" class="corporate-showcase-img" loading="lazy" />
+            <picture>
+              <source srcset="/assets/corporate-brief.webp" type="image/webp" />
+              <img src="/assets/corporate-brief.jpg" alt="Technical scoping consultation and project brief review" class="corporate-showcase-img" width="1376" height="768" loading="lazy" decoding="async" />
+            </picture>
           </div>
         </div>
 
@@ -567,8 +576,8 @@
     <div class="container footer-inner">
       <div class="footer-col">
         <a href="/" class="site-logo" style="margin-bottom: 1.25rem;">
-          <img src="assets/for dark bg.png" alt="Byteform" class="logo-img logo-dark" />
-          <img src="assets/for light bg.png" alt="Byteform" class="logo-img logo-light" />
+          <img src="/assets/byteform-logo-dark.png" alt="Byteform Digital Studio" class="logo-img logo-dark" width="240" height="80" decoding="async" />
+          <img src="/assets/byteform-logo-light.png" alt="" class="logo-img logo-light" width="240" height="80" decoding="async" aria-hidden="true" />
         </a>
         <p class="footer-desc">
           Independent digital atelier engineering high impact web applications, cloud native infrastructure, and tactile
@@ -660,7 +669,7 @@
     </div>
   </footer>
 
-  <script src="/script.js?v=2.4"></script>
+  <script src="/script.js?v=2.0" defer></script>
 </body>
 
 </html>

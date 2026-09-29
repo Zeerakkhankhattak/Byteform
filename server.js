@@ -284,6 +284,22 @@ const server = http.createServer((req, res) => {
     res.end();
     return;
   }
+  // Asset redirects for legacy URLs
+  if (reqPath === '/assets/for dark bg.png' || reqPath === '/assets/for%20dark%20bg.png') {
+    res.writeHead(301, { 'Location': '/assets/byteform-logo-dark.png' });
+    res.end();
+    return;
+  }
+  if (reqPath === '/assets/for light bg.png' || reqPath === '/assets/for%20light%20bg.png') {
+    res.writeHead(301, { 'Location': '/assets/byteform-logo-light.png' });
+    res.end();
+    return;
+  }
+  if (reqPath === '/assets/website icon.png' || reqPath === '/assets/website%20icon.png') {
+    res.writeHead(301, { 'Location': '/assets/byteform-icon.png' });
+    res.end();
+    return;
+  }
   if (reqPath === '/capabilities' || reqPath === '/capabilities.html') {
     res.writeHead(301, { 'Location': '/services' });
     res.end();
