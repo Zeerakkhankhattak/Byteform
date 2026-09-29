@@ -299,9 +299,9 @@ if (!fs.existsSync(SITEMAP_PATH)) {
 // --- Check 9: Favicon and App Icon Physical Files ---
 const iconFilesToCheck = [
   'favicon.ico',
-  'public/favicon.ico',
   'favicon-48x48.png',
-  'public/favicon-48x48.png',
+  'favicon-32x32.png',
+  'favicon-16x16.png',
   'apple-touch-icon.png'
 ];
 
