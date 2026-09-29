@@ -296,6 +296,29 @@ if (!fs.existsSync(SITEMAP_PATH)) {
   reportPass(`Sitemap valid with ${locMatches.length} URLs`);
 }
 
+// --- Check 9: Favicon and App Icon Physical Files ---
+const iconFilesToCheck = [
+  'favicon.ico',
+  'public/favicon.ico',
+  'favicon-48x48.png',
+  'public/favicon-48x48.png',
+  'apple-touch-icon.png'
+];
+
+for (const iconRelPath of iconFilesToCheck) {
+  const iconFullPath = path.join(ROOT_DIR, iconRelPath);
+  if (!fs.existsSync(iconFullPath)) {
+    reportFail(iconRelPath, `Physical icon file missing: expected raw file at "${iconRelPath}"`);
+  } else {
+    const iconStat = fs.statSync(iconFullPath);
+    if (iconStat.size < 100) {
+      reportFail(iconRelPath, `Icon file is suspiciously small or empty (${iconStat.size} bytes)`);
+    } else {
+      reportPass(`Icon file verified: ${iconRelPath} (${iconStat.size} bytes)`);
+    }
+  }
+}
+
 // Final Summary
 console.log(`\n======================================================`);
 console.log(`📊 SEO Automated Audit Summary:`);

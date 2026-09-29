@@ -403,8 +403,8 @@ const server = http.createServer((req, res) => {
         res.end('500 Internal Server Error');
       }
     } else {
-      // Long-term caching for immutable static assets
-      if (reqPath.startsWith('/assets/')) {
+      // Long-term caching for immutable static assets & icons
+      if (reqPath.startsWith('/assets/') || reqPath.startsWith('/public/') || ext === '.ico' || ext === '.png' || reqPath === '/favicon.ico') {
         res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
       } else if (ext === '.html') {
         res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
