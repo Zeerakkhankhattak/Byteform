@@ -22,11 +22,13 @@ A comprehensive, ground-up technical SEO, performance, accessibility, and archit
 - **Commit:** `6bce83e`
 
 ### Phase 1 — URL Canonicalization & 301 Redirects
-- **File Renames:**
-  - `capabilities.html` &rarr; `services.html` (Route: `/services`)
-  - `collective.html` &rarr; `team.html` (Route: `/team`)
-  - `protocol.html` &rarr; `process.html` (Route: `/process`)
-- **New Core Route:** Created [`contact.html`](file:///home/ayan/Byteform/contact.html) (Route: `/contact`).
+- **File Renames & Clean Directory Architecture:**
+  - `capabilities.html` &rarr; `services/index.html` (Clean Route: `/services`)
+  - `collective.html` &rarr; `team/index.html` (Clean Route: `/team`)
+  - `protocol.html` &rarr; `process/index.html` (Clean Route: `/process`)
+  - `reviews.html` &rarr; `reviews/index.html` (Clean Route: `/reviews`)
+  - `careers.html` &rarr; `careers/index.html` (Clean Route: `/careers`)
+- **New Core Route:** Created [`contact/index.html`](file:///home/ayan/Byteform/contact/index.html) (Clean Route: `/contact`).
 - **Hosting & Server Redirects:**
   - Added single-hop 301 redirects in [`vercel.json`](file:///home/ayan/Byteform/vercel.json) (`cleanUrls: true`, `trailingSlash: false`, apex `byteform.org` &rarr; `www.byteform.org`, `*.html` &rarr; clean slugs, legacy route mappings).
   - Added matching 301 redirect logic in [`server.js`](file:///home/ayan/Byteform/server.js).
@@ -46,13 +48,13 @@ A comprehensive, ground-up technical SEO, performance, accessibility, and archit
 ### Phase 3 — Semantic Heading Structure & Page Copy
 - **Heading Hierarchy:** Standardized to strictly 1 `<h1>` per page with monotonic descending nesting (`H1` &rarr; `H2` &rarr; `H3`):
   - `index.html`: `<h1>Web, Mobile &amp; AI Software Studio in <span class="text-blue">Peshawar</span></h1>`, with visible styled subtitle `<p class="hero-subtitle">Engineering high impact digital systems.</p>`. Converted metric `<h4>` to `<p class="metric-val">` with matching CSS. Track cards nested as `<h3>` under section `<h2>`.
-  - `services.html`: `<h1>Web, Mobile, AI &amp; Cloud <span class="text-blue">Engineering Services</span></h1>`. Each of the 11 service cards converted to `<h2 class="service-card-title">`. Converted tech tag containers to semantic `<ul class="service-tags"><li class="service-tag">`.
-  - `reviews.html`: `<h1>Client Reviews &amp; <span class="text-blue">Case Studies</span></h1>`. Replaced filler header with `<h2 style="font-size: clamp(2rem, 3.5vw, 2.8rem);">What clients say about working with Byteform</h2>`. Converted reviewer names `<h5>` to `<p class="reviewer-name">`, and case reflections to `<h3>`.
-  - `team.html`: Added section `<h2>Core Engineering Disciplines &amp; Domain Leads</h2>` and promoted benefits to `<h3>`.
-  - `process.html`: Added section `<h2>The Four-Stage Engineering Framework</h2>`.
-  - `careers.html`: Converted perks `<h4>` to `<h3>`.
+  - `services/index.html`: `<h1>Web, Mobile, AI &amp; Cloud <span class="text-blue">Engineering Services</span></h1>`. Each of the 11 service cards converted to `<h2 class="service-card-title">`. Converted tech tag containers to semantic `<ul class="service-tags"><li class="service-tag">`.
+  - `reviews/index.html`: `<h1>Client Reviews &amp; <span class="text-blue">Case Studies</span></h1>`. Replaced filler header with `<h2 style="font-size: clamp(2rem, 3.5vw, 2.8rem);">What clients say about working with Byteform</h2>`. Converted reviewer names `<h5>` to `<p class="reviewer-name">`, and case reflections to `<h3>`.
+  - `team/index.html`: Added section `<h2>Core Engineering Disciplines &amp; Domain Leads</h2>` and promoted benefits to `<h3>`.
+  - `process/index.html`: Added section `<h2>The Four-Stage Engineering Framework</h2>`.
+  - `careers/index.html`: Converted perks `<h4>` to `<h3>`.
 - **Descriptive Anchors:** Renamed generic link text to descriptive anchors ("Explore our services", "Meet the team", "See our delivery process", "Read client reviews", "View open careers").
-- **Deduplication:** Reworded duplicate marketing quip in `services.html`.
+- **Deduplication:** Reworded duplicate marketing quip in `services/index.html`.
 - **Commit:** `64aa6fd`
 
 ### Phase 4 — Structured Data (JSON-LD)
@@ -60,26 +62,26 @@ A comprehensive, ground-up technical SEO, performance, accessibility, and archit
 - **Site-Wide Organization:** `ProfessionalService` schema (`@id: https://www.byteform.org/#org`) with legal name, alternate name, canonical URL, logo, business email, postal address (Peshawar, Khyber Pakhtunkhwa, PK 25000), and social profiles (Instagram, Facebook, LinkedIn).
 - **WebSite Schema:** Linked to Organization as publisher.
 - **Breadcrumbs:** `BreadcrumbList` markup on all inner pages.
-- **Service Entities:** 11 detailed `Service` entities embedded in `services.html` linked to provider `#org`.
-- **JobPosting Entities:** 4 active open roles modeled in `careers.html` (Video Editor, DevOps Engineer, SEO Specialist, Full Stack Developer) with `TELECOMMUTE` and remote attributes.
+- **Service Entities:** 11 detailed `Service` entities embedded in `services/index.html` linked to provider `#org`.
+- **JobPosting Entities:** 4 active open roles modeled in `careers/index.html` (Video Editor, DevOps Engineer, SEO Specialist, Full Stack Developer) with `TELECOMMUTE` and remote attributes.
 - **Exclusions Adhered To:** Zero `Review`, `AggregateRating`, or `FAQPage` rich-snippet markup generated to prevent manual penalties.
 - **Commit:** `0157f14`
 
 ### Phase 5 — New Service Pages, Case Studies & Blog Architecture
 - **Dedicated Service Pages Created:**
-  - [`services/web-development.html`](file:///home/ayan/Byteform/services/web-development.html) (`/services/web-development`)
-  - [`services/mobile-app-development.html`](file:///home/ayan/Byteform/services/mobile-app-development.html) (`/services/mobile-app-development`)
-  - [`services/ai-automation.html`](file:///home/ayan/Byteform/services/ai-automation.html) (`/services/ai-automation`)
-  - [`services/ui-ux-design.html`](file:///home/ayan/Byteform/services/ui-ux-design.html) (`/services/ui-ux-design`)
-  - [`services/cloud-devops.html`](file:///home/ayan/Byteform/services/cloud-devops.html) (`/services/cloud-devops`)
-  - [`services/technical-seo.html`](file:///home/ayan/Byteform/services/technical-seo.html) (`/services/technical-seo`)
-- **Hub Enhancement:** Updated `services.html` with direct explore links to the 6 dedicated service pages.
+  - [`services/web-development/index.html`](file:///home/ayan/Byteform/services/web-development/index.html) (`/services/web-development`)
+  - [`services/mobile-app-development/index.html`](file:///home/ayan/Byteform/services/mobile-app-development/index.html) (`/services/mobile-app-development`)
+  - [`services/ai-automation/index.html`](file:///home/ayan/Byteform/services/ai-automation/index.html) (`/services/ai-automation`)
+  - [`services/ui-ux-design/index.html`](file:///home/ayan/Byteform/services/ui-ux-design/index.html) (`/services/ui-ux-design`)
+  - [`services/cloud-devops/index.html`](file:///home/ayan/Byteform/services/cloud-devops/index.html) (`/services/cloud-devops`)
+  - [`services/technical-seo/index.html`](file:///home/ayan/Byteform/services/technical-seo/index.html) (`/services/technical-seo`)
+- **Hub Enhancement:** Updated `services/index.html` with direct explore links to the 6 dedicated service pages.
 - **Case Studies Architecture:**
-  - Created [`case-studies.html`](file:///home/ayan/Byteform/case-studies.html) (hub index).
+  - Created [`case-studies/index.html`](file:///home/ayan/Byteform/case-studies/index.html) (hub index).
   - Created [`case-studies/template.html`](file:///home/ayan/Byteform/case-studies/template.html).
-  - Created reflection pages: [`case-studies/health-tech.html`](file:///home/ayan/Byteform/case-studies/health-tech.html), [`case-studies/webgl-showroom.html`](file:///home/ayan/Byteform/case-studies/webgl-showroom.html), [`case-studies/fintech-portal.html`](file:///home/ayan/Byteform/case-studies/fintech-portal.html). Marked with `noindex` and `TODO(owner)` placeholders.
+  - Created reflection pages: [`case-studies/health-tech/index.html`](file:///home/ayan/Byteform/case-studies/health-tech/index.html), [`case-studies/webgl-showroom/index.html`](file:///home/ayan/Byteform/case-studies/webgl-showroom/index.html), [`case-studies/fintech-portal/index.html`](file:///home/ayan/Byteform/case-studies/fintech-portal/index.html). Marked with `noindex` and `TODO(owner)` placeholders.
 - **Blog Scaffold:**
-  - Created [`blog.html`](file:///home/ayan/Byteform/blog.html) and [`blog/template.html`](file:///home/ayan/Byteform/blog/template.html) (with `Article` schema, author, dates, breadcrumbs). Marked with `noindex` until first post is written.
+  - Created [`blog/index.html`](file:///home/ayan/Byteform/blog/index.html) and [`blog/template.html`](file:///home/ayan/Byteform/blog/template.html) (with `Article` schema, author, dates, breadcrumbs). Marked with `noindex` until first post is written.
   - Created [`docs/seo-content-plan.md`](file:///home/ayan/Byteform/docs/seo-content-plan.md) with 10 production-ready content briefs tailored to local and international tech buyers.
 - **Commit:** `6f4ca5e`
 
@@ -192,12 +194,12 @@ The following quantitative or absolute marketing claims exist in current site co
 - [ ] **Physical Street Address:** Provide the registered studio street address/suite in Peshawar to complete local NAP schema.
 - [ ] **Phone & WhatsApp Confirmation:** Confirm whether `+923711292921` is approved to be added to public JSON-LD `telephone` schema.
 - [ ] **Operating Business Hours:** Provide official studio hours (e.g. `Mo-Fr 09:00-18:00 PKT`) for `openingHoursSpecification` schema.
-- [ ] **Google Business Profile (GBP):** Create and verify a Google Business Profile listing for "Byteform Digital Studio" in Peshawar; paste the Maps share/embed URL into the placeholder slot in `contact.html`.
+- [ ] **Google Business Profile (GBP):** Create and verify a Google Business Profile listing for "Byteform Digital Studio" in Peshawar; paste the Maps share/embed URL into the placeholder slot in `contact/index.html`.
 - [ ] **Authentic Team Photograph:** Replace `assets/corporate-team.jpg` and `corporate-team.webp` with an authentic photo of the Peshawar studio team.
-- [ ] **Testimonial Verification Proof:** Add company website URLs and LinkedIn profile URLs for Elena Rostova, Marcus Vance, Sophia Chen, Liam O'Connor, David Kim, and Rachel Adams in `reviews.html` using the `data-company-url` and `data-linkedin-url` attributes.
-- [ ] **Case Study Approvals:** Review placeholder sections in `case-studies/health-tech.html`, `case-studies/webgl-showroom.html`, and `case-studies/fintech-portal.html`. Once client permissions and verified metrics are filled in, remove `<meta name="robots" content="noindex, follow">` and add them to `sitemap.xml`.
+- [ ] **Testimonial Verification Proof:** Add company website URLs and LinkedIn profile URLs for Elena Rostova, Marcus Vance, Sophia Chen, Liam O'Connor, David Kim, and Rachel Adams in `reviews/index.html` using the `data-company-url` and `data-linkedin-url` attributes.
+- [ ] **Case Study Approvals:** Review placeholder sections in `case-studies/health-tech/index.html`, `case-studies/webgl-showroom/index.html`, and `case-studies/fintech-portal/index.html`. Once client permissions and verified metrics are filled in, remove `<meta name="robots" content="noindex, follow">` and add them to `sitemap.xml`.
 - [ ] **Custom OG Image Graphic:** Review generated asset `assets/byteform-og.png` (1200×630) or replace with custom studio branding.
-- [ ] **First Blog Post:** Review `docs/seo-content-plan.md`, author the first in-depth technical post using `blog/template.html`, remove the `noindex` tag from `blog.html`, and add "Blog" to the primary navigation bar.
+- [ ] **First Blog Post:** Review `docs/seo-content-plan.md`, author the first in-depth technical post using `blog/template.html`, remove the `noindex` tag from `blog/index.html`, and add "Blog" to the primary navigation bar.
 
 ---
 

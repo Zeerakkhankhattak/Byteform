@@ -1086,6 +1086,16 @@ function initScrollAndClickAnimations() {
         e.preventDefault();
         document.body.classList.add('page-fade-out');
         setTimeout(() => {
+          if (window.location.protocol === 'file:') {
+            const currentParts = window.location.pathname.split('/').filter(Boolean);
+            const byteformIndex = currentParts.lastIndexOf('Byteform');
+            if (byteformIndex !== -1) {
+              const rootPrefix = currentParts.slice(0, byteformIndex + 1).join('/');
+              const target = href === '/' ? '/index.html' : (href.endsWith('.html') ? href : `${href}/index.html`);
+              window.location.href = `file:///${rootPrefix}${target}`;
+              return;
+            }
+          }
           window.location.href = href;
         }, 180);
       });
