@@ -32,40 +32,40 @@ function parseBody(req) {
 }
 
 export default async function handler(req, res) {
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.has(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Vary', 'Origin');
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  try {
+    const origin = req.headers.origin;
+    if (origin && ALLOWED_ORIGINS.has(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Vary', 'Origin');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  if (req.method === 'OPTIONS') {
-    return res.status(204).end();
-  }
+    if (req.method === 'OPTIONS') {
+      return res.status(204).end();
+    }
 
-  // Admin Authentication Guard
-  if (!verifyAdminRequest(req)) {
-    return res.status(401).json({
-      success: false,
-      error: 'Unauthorized: Admin authentication required.'
-    });
-  }
+    // Admin Authentication Guard
+    if (!verifyAdminRequest(req)) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized: Admin authentication required.'
+      });
+    }
 
-  if (!isSupabaseConfigured()) {
-    return res.status(503).json({
-      success: false,
-      error: 'Supabase credentials are not configured in environment variables.'
-    });
-  }
+    if (!isSupabaseConfigured()) {
+      return res.status(503).json({
+        success: false,
+        error: 'Supabase credentials are not configured in environment variables.'
+      });
+    }
 
-  const supabase = getSupabaseAdmin();
-  const siteUrl = getSiteUrl(req);
+    const supabase = getSupabaseAdmin();
+    const siteUrl = getSiteUrl(req);
 
-  // 1. GET: List all issued certificates
-  if (req.method === 'GET') {
-    try {
+    // 1. GET: List all issued certificates
+    if (req.method === 'GET') {
       const { data, error } = await supabase
         .from('certificates')
         .select('id, certificate_id, name, internship_field, start_date, end_date, status, created_at')
@@ -73,10 +73,13 @@ export default async function handler(req, res) {
 
       if (error) {
         console.error('Supabase fetch certificates error:', error);
-        return res.status(500).json({ success: false, error: 'Failed to retrieve certificates' });
+        let msg = error.message;
+        if (msg.includes('Could not find the table') || error.code === '42P01') {
+          msg = "Database table 'certificates' does not exist yet in Supabase! Please open your Supabase SQL Editor and run the script in supabase/schema.sql.";
+        }
+        return res.status(200).json({ success: true, certificates: [], warning: msg });
       }
 
-      // Append verification URL to each record
       const enrichedCertificates = (data || []).map(cert => ({
         ...cert,
         verification_url: `${siteUrl}/verify/${cert.certificate_id}`
@@ -86,53 +89,45 @@ export default async function handler(req, res) {
         success: true,
         certificates: enrichedCertificates
       });
-    } catch (err) {
-      console.error('Error fetching certificates:', err);
-      return res.status(500).json({ success: false, error: 'Internal server error' });
-    }
-  }
-
-  // 2. POST: Create a new certificate
-  if (req.method === 'POST') {
-    const body = parseBody(req);
-    if (!body) {
-      return res.status(400).json({ success: false, error: 'Invalid JSON request body' });
     }
 
-    const name = typeof body.name === 'string' ? body.name.trim() : '';
-    const internship_field = typeof body.internship_field === 'string' ? body.internship_field.trim() : '';
-    const start_date = typeof body.start_date === 'string' ? body.start_date.trim() : '';
-    const end_date = typeof body.end_date === 'string' ? body.end_date.trim() : '';
-    const status = body.status === 'revoked' ? 'revoked' : 'valid';
+    // 2. POST: Create a new certificate
+    if (req.method === 'POST') {
+      const body = parseBody(req);
+      if (!body) {
+        return res.status(400).json({ success: false, error: 'Invalid JSON request body' });
+      }
 
-    // Strict validation
-    if (!name || name.length < 2 || name.length > 100) {
-      return res.status(400).json({ success: false, error: "Recipient's name must be between 2 and 100 characters." });
-    }
+      const name = typeof body.name === 'string' ? body.name.trim() : '';
+      const internship_field = typeof body.internship_field === 'string' ? body.internship_field.trim() : '';
+      const start_date = typeof body.start_date === 'string' ? body.start_date.trim() : '';
+      const end_date = typeof body.end_date === 'string' ? body.end_date.trim() : '';
+      const status = body.status === 'revoked' ? 'revoked' : 'valid';
 
-    if (!internship_field || internship_field.length < 2 || internship_field.length > 100) {
-      return res.status(400).json({ success: false, error: 'Internship field is required (2-100 characters).' });
-    }
+      if (!name || name.length < 2 || name.length > 100) {
+        return res.status(400).json({ success: false, error: "Recipient's name must be between 2 and 100 characters." });
+      }
 
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    if (!start_date || !dateRegex.test(start_date) || isNaN(Date.parse(start_date))) {
-      return res.status(400).json({ success: false, error: 'Valid start date (YYYY-MM-DD) is required.' });
-    }
+      if (!internship_field || internship_field.length < 2 || internship_field.length > 100) {
+        return res.status(400).json({ success: false, error: 'Internship field is required (2-100 characters).' });
+      }
 
-    if (!end_date || !dateRegex.test(end_date) || isNaN(Date.parse(end_date))) {
-      return res.status(400).json({ success: false, error: 'Valid end date (YYYY-MM-DD) is required.' });
-    }
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!start_date || !dateRegex.test(start_date) || isNaN(Date.parse(start_date))) {
+        return res.status(400).json({ success: false, error: 'Valid start date (YYYY-MM-DD) is required.' });
+      }
 
-    if (new Date(end_date) < new Date(start_date)) {
-      return res.status(400).json({ success: false, error: 'End date cannot be earlier than start date.' });
-    }
+      if (!end_date || !dateRegex.test(end_date) || isNaN(Date.parse(end_date))) {
+        return res.status(400).json({ success: false, error: 'Valid end date (YYYY-MM-DD) is required.' });
+      }
 
-    try {
-      // Automatically generate unique certificate ID
+      if (new Date(end_date) < new Date(start_date)) {
+        return res.status(400).json({ success: false, error: 'End date cannot be earlier than start date.' });
+      }
+
       const certificate_id = await generateUniqueCertificateId(supabase, start_date);
       const verification_url = `${siteUrl}/verify/${certificate_id}`;
 
-      // Insert record into Supabase
       const { data, error } = await supabase
         .from('certificates')
         .insert([{
@@ -155,9 +150,15 @@ export default async function handler(req, res) {
         return res.status(400).json({ success: false, error: msg });
       }
 
-      // Generate QR codes for admin and graphic designer download
-      const qr_data_url = await generateQrPngDataUrl(verification_url, 600);
-      const qr_svg = await generateQrSvg(verification_url);
+      // Generate QR codes safely (pure vector SVG and data URL)
+      let qr_data_url = '';
+      let qr_svg = '';
+      try {
+        qr_svg = await generateQrSvg(verification_url);
+        qr_data_url = await generateQrPngDataUrl(verification_url, 600);
+      } catch (qrErr) {
+        console.error('QR generation non-fatal error:', qrErr);
+      }
 
       return res.status(201).json({
         success: true,
@@ -169,27 +170,22 @@ export default async function handler(req, res) {
           qr_svg
         }
       });
-    } catch (err) {
-      console.error('Error creating certificate:', err);
-      return res.status(500).json({ success: false, error: err.message || 'Internal server error while creating certificate' });
-    }
-  }
-
-  // 3. PATCH: Revoke a certificate
-  if (req.method === 'PATCH') {
-    const body = parseBody(req);
-    if (!body) {
-      return res.status(400).json({ success: false, error: 'Invalid JSON request body' });
     }
 
-    const certId = typeof body.certificate_id === 'string' ? body.certificate_id.trim().toUpperCase() : null;
-    const dbId = typeof body.id === 'string' ? body.id.trim() : null;
+    // 3. PATCH: Revoke a certificate
+    if (req.method === 'PATCH') {
+      const body = parseBody(req);
+      if (!body) {
+        return res.status(400).json({ success: false, error: 'Invalid JSON request body' });
+      }
 
-    if (!certId && !dbId) {
-      return res.status(400).json({ success: false, error: 'Missing certificate_id or id to revoke.' });
-    }
+      const certId = typeof body.certificate_id === 'string' ? body.certificate_id.trim().toUpperCase() : null;
+      const dbId = typeof body.id === 'string' ? body.id.trim() : null;
 
-    try {
+      if (!certId && !dbId) {
+        return res.status(400).json({ success: false, error: 'Missing certificate_id or id to revoke.' });
+      }
+
       let query = supabase.from('certificates').update({ status: 'revoked' });
       if (certId) {
         query = query.eq('certificate_id', certId);
@@ -209,11 +205,14 @@ export default async function handler(req, res) {
         message: `Certificate ${data.certificate_id} has been revoked.`,
         certificate: data
       });
-    } catch (err) {
-      console.error('Error revoking certificate:', err);
-      return res.status(500).json({ success: false, error: 'Internal server error while revoking certificate' });
     }
-  }
 
-  return res.status(405).json({ success: false, error: 'Method not allowed' });
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
+  } catch (fatalErr) {
+    console.error('Fatal unhandled error in certificates handler:', fatalErr);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error: ' + (fatalErr.message || String(fatalErr))
+    });
+  }
 }

@@ -1,38 +1,32 @@
 import QRCode from 'qrcode';
 
-export async function generateQrPngDataUrl(text, width = 600) {
-  return await QRCode.toDataURL(text, {
-    width,
-    margin: 2,
-    color: {
-      dark: '#000000',
-      light: '#ffffff'
-    },
-    errorCorrectionLevel: 'M'
-  });
-}
-
+// Generates pure vector SVG without any native canvas / C++ dependencies
 export async function generateQrSvg(text) {
-  return await QRCode.toString(text, {
-    type: 'svg',
-    margin: 2,
-    color: {
-      dark: '#000000',
-      light: '#ffffff'
-    },
-    errorCorrectionLevel: 'M'
-  });
+  try {
+    return await QRCode.toString(text, {
+      type: 'svg',
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#ffffff'
+      },
+      errorCorrectionLevel: 'M'
+    });
+  } catch (err) {
+    console.error('Failed to generate QR SVG:', err);
+    return '';
+  }
 }
 
-export async function generateQrPngBuffer(text, width = 1024) {
-  return await QRCode.toBuffer(text, {
-    type: 'png',
-    width,
-    margin: 2,
-    color: {
-      dark: '#000000',
-      light: '#ffffff'
-    },
-    errorCorrectionLevel: 'M'
-  });
+// Generates an SVG Data URL suitable for any <img src="..."> in all modern browsers
+export async function generateQrPngDataUrl(text, width = 600) {
+  try {
+    const svg = await generateQrSvg(text);
+    if (svg) {
+      return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+    }
+  } catch (err) {
+    console.error('Failed to generate QR Data URL:', err);
+  }
+  return '';
 }

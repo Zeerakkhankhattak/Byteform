@@ -954,16 +954,50 @@
 
     function downloadQrPng() {
       if (!activeModalCert) return;
-      const url = activeModalCert.verification_url || `${window.location.origin}/verify/${activeModalCert.certificate_id}`;
-      const filename = `QR-${activeModalCert.certificate_id}`;
-      window.location.href = `/api/qr?text=${encodeURIComponent(url)}&format=png&download=true&filename=${encodeURIComponent(filename)}`;
+      const img = document.getElementById('modal-qr-img');
+      if (!img || !img.src) return;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 1024, 1024);
+
+      const renderImg = new Image();
+      renderImg.crossOrigin = 'anonymous';
+      renderImg.onload = () => {
+        ctx.drawImage(renderImg, 0, 0, 1024, 1024);
+        const a = document.createElement('a');
+        a.download = `QR-${activeModalCert.certificate_id}.png`;
+        a.href = canvas.toDataURL('image/png');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      };
+      renderImg.src = img.src;
     }
 
     function downloadQrSvg() {
       if (!activeModalCert) return;
-      const url = activeModalCert.verification_url || `${window.location.origin}/verify/${activeModalCert.certificate_id}`;
-      const filename = `QR-${activeModalCert.certificate_id}`;
-      window.location.href = `/api/qr?text=${encodeURIComponent(url)}&format=svg&download=true&filename=${encodeURIComponent(filename)}`;
+      let svgStr = activeModalCert.qr_svg;
+      if (!svgStr) {
+        const img = document.getElementById('modal-qr-img');
+        if (img && img.src.startsWith('data:image/svg+xml;utf8,')) {
+          svgStr = decodeURIComponent(img.src.replace('data:image/svg+xml;utf8,', ''));
+        }
+      }
+      if (!svgStr) return;
+
+      const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.download = `QR-${activeModalCert.certificate_id}.svg`;
+      a.href = url;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 100);
     }
 
     function escapeHtml(str) {
