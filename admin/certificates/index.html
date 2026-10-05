@@ -851,9 +851,16 @@
           credentials: 'include',
           body: JSON.stringify({ name, internship_field, start_date, end_date, status })
         });
-        const json = await res.json();
+        
+        let json;
+        const text = await res.text();
+        try {
+          json = JSON.parse(text);
+        } catch (e) {
+          json = { error: text || `Server returned error (${res.status})` };
+        }
 
-        if (json.success && json.certificate) {
+        if (res.ok && json.success && json.certificate) {
           showToast('Certificate successfully issued!');
           document.getElementById('create-cert-form').reset();
           loadCertificates();
@@ -865,7 +872,7 @@
           errorDiv.style.display = 'block';
         }
       } catch (err) {
-        errorDiv.textContent = 'Server communication error';
+        errorDiv.textContent = err.message ? `Error: ${err.message}` : 'Server communication error';
         errorDiv.style.display = 'block';
       } finally {
         submitBtn.disabled = false;

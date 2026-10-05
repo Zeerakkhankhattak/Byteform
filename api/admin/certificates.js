@@ -148,7 +148,11 @@ export default async function handler(req, res) {
 
       if (error) {
         console.error('Supabase insert certificate error:', error);
-        return res.status(500).json({ success: false, error: 'Failed to save certificate in database: ' + error.message });
+        let msg = error.message;
+        if (msg.includes('Could not find the table') || error.code === '42P01') {
+          msg = "Database table 'certificates' does not exist yet in Supabase! Please open your Supabase SQL Editor and run the script in supabase/schema.sql.";
+        }
+        return res.status(400).json({ success: false, error: msg });
       }
 
       // Generate QR codes for admin and graphic designer download
@@ -167,7 +171,7 @@ export default async function handler(req, res) {
       });
     } catch (err) {
       console.error('Error creating certificate:', err);
-      return res.status(500).json({ success: false, error: 'Internal server error while creating certificate' });
+      return res.status(500).json({ success: false, error: err.message || 'Internal server error while creating certificate' });
     }
   }
 
