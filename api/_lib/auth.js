@@ -1,8 +1,36 @@
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+
+function ensureEnvLoaded() {
+  if (process.env.ADMIN_PASSWORD && process.env.ADMIN_JWT_SECRET) return;
+  try {
+    const envPath = path.resolve(process.cwd(), '.env');
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, 'utf8');
+      for (const line of content.split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        const idx = trimmed.indexOf('=');
+        if (idx !== -1) {
+          const key = trimmed.slice(0, idx).trim();
+          let val = trimmed.slice(idx + 1).trim();
+          if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+            val = val.slice(1, -1);
+          }
+          if (!process.env[key]) {
+            process.env[key] = val;
+          }
+        }
+      }
+    }
+  } catch (e) {}
+}
 
 const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function getSecret() {
+  ensureEnvLoaded();
   const secret = process.env.ADMIN_JWT_SECRET || process.env.ADMIN_PASSWORD;
   if (!secret) {
     throw new Error('ADMIN_PASSWORD or ADMIN_JWT_SECRET is not set in environment variables.');
@@ -11,6 +39,7 @@ function getSecret() {
 }
 
 export function verifyPassword(providedPassword) {
+  ensureEnvLoaded();
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (!adminPassword) {
     throw new Error('ADMIN_PASSWORD environment variable is not configured.');
