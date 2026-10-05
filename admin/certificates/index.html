@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Certificate Management Console | Byteform Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="/style.css?v=2.4" />
+
+  <style>
+    /* Admin Portal Bespoke Styles */
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6.5rem 1.5rem 4rem;
+    }
+
+    .admin-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .admin-title-wrap h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .admin-title-wrap p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      color: var(--text-primary);
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-medium);
+    }
+
+    /* Auth Login View */
+    .auth-card-wrap {
+      max-width: 440px;
+      margin: 4rem auto;
+      padding: 0 1rem;
+    }
+
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    .auth-card .shield-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--accent-blue-subtle);
+      border: 1px solid var(--accent-blue-border);
+      color: var(--accent-blue);
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Admin Panels */
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 992px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .admin-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: var(--card-shadow);
+    }
+
+    .admin-card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Form Inputs */
+    .form-group {
+      margin-bottom: 1.15rem;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.45rem;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border-medium);
+      border-radius: 10px;
+      color: var(--text-primary);
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .btn-create {
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      background: var(--accent-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-create:hover {
+      background: var(--accent-blue-hover);
+    }
+
+    /* Table Styles */
+    .table-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.6rem 0.9rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border-medium);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.88rem;
+    }
+
+    .filter-select {
+      padding: 0.6rem 0.9rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border-medium);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.88rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    .cert-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    .cert-table th {
+      background: var(--bg-secondary);
+      padding: 0.85rem 1rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-size: 0.76rem;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    .cert-table td {
+      padding: 0.95rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+
+    .cert-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .cert-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .table-id-code {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.86rem;
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .badge-status.valid {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-status.revoked {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .table-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+
+    .btn-action-icon {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 5px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      font-size: 0.8rem;
+      gap: 0.25rem;
+      text-decoration: none;
+    }
+
+    .btn-action-icon:hover {
+      color: var(--text-primary);
+      border-color: var(--border-medium);
+      background: var(--bg-card-hover);
+    }
+
+    .btn-action-icon.revoke-btn:hover {
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+
+    /* Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-medium);
+      border-radius: 20px;
+      max-width: 520px;
+      width: 100%;
+      padding: 2.25rem;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      position: relative;
+      animation: modal-pop 0.25s var(--ease-spring);
+    }
+
+    @keyframes modal-pop {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .qr-preview-img {
+      width: 200px;
+      height: 200px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 1.25rem auto;
+      display: block;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-url-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.85rem;
+      font-family: var(--font-mono, monospace);
+      color: var(--accent-blue);
+      word-break: break-all;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .modal-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #10b981;
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      z-index: 2000;
+      animation: toast-in 0.3s ease;
+    }
+
+    @keyframes toast-in {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- SITE HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo" aria-label="Byteform Home">
+        <img src="/assets/byteform-logo-dark.png" alt="Byteform Digital Studio" class="logo-img logo-dark" width="240" height="80" decoding="async" />
+        <img src="/assets/byteform-logo-light.png" alt="" class="logo-img logo-light" width="240" height="80" decoding="async" aria-hidden="true" />
+      </a>
+
+      <nav class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/verify" class="nav-link" target="_blank">Public Verification</a>
+        <a href="/careers" class="nav-link">Careers</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme" title="Switch Theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-container">
+    
+    <!-- VIEW 1: AUTHENTICATION LOGIN -->
+    <div id="auth-view" style="display: none;">
+      <div class="auth-card-wrap">
+        <div class="auth-card">
+          <div class="shield-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h2 style="font-size: 1.45rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">
+            Studio Administration
+          </h2>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 1.75rem;">
+            Please enter your administrator passphrase to access certificate issuing and records.
+          </p>
+
+          <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <input
+                type="password"
+                id="admin-password-input"
+                class="form-input"
+                placeholder="Enter Admin Passphrase"
+                required
+                autocomplete="current-password"
+              />
+            </div>
+            <button type="submit" class="btn-create" id="login-btn">
+              Unlock Console
+            </button>
+            <div id="login-error" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.75rem; display: none;"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: ADMIN MANAGEMENT DASHBOARD -->
+    <div id="dashboard-view" style="display: none;">
+      <div class="admin-header-bar">
+        <div class="admin-title-wrap">
+          <h1>Certificate Issuance &amp; Verification</h1>
+          <p>Create authentic credentials, generate graphic design QR codes, and manage status.</p>
+        </div>
+        <div class="admin-actions">
+          <a href="/verify" target="_blank" class="btn-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            Public Verify Page
+          </a>
+          <button onclick="handleLogout()" class="btn-secondary" style="color: var(--text-muted);">
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <!-- LEFT: CREATE CERTIFICATE -->
+        <div class="admin-card">
+          <div class="admin-card-title">
+            <span>Issue New Certificate</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+          </div>
+
+          <form id="create-cert-form" onsubmit="handleCreateCert(event)">
+            <div class="form-group">
+              <label class="form-label" for="cert-name">Recipient's Name</label>
+              <input type="text" id="cert-name" class="form-input" placeholder="e.g. Ayan Ahmad" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cert-field">Internship Field</label>
+              <input type="text" id="cert-field" list="fields-list" class="form-input" placeholder="e.g. Software Engineering" required />
+              <datalist id="fields-list">
+                <option value="Software Engineering" />
+                <option value="Web Development" />
+                <option value="Mobile App Development" />
+                <option value="AI & Machine Learning" />
+                <option value="UI/UX & Product Design" />
+                <option value="Cloud Infrastructure & DevOps" />
+                <option value="Technical SEO & Performance" />
+              </datalist>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cert-start-date">Start Date</label>
+              <input type="date" id="cert-start-date" class="form-input" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cert-end-date">End Date</label>
+              <input type="date" id="cert-end-date" class="form-input" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="cert-status">Initial Status</label>
+              <select id="cert-status" class="form-select">
+                <option value="valid" selected>Valid (Authentic)</option>
+                <option value="revoked">Revoked</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn-create" id="btn-submit-cert">
+              Create Certificate
+            </button>
+            <div id="create-error" style="color: #ef4444; font-size: 0.85rem; margin-top: 0.75rem; display: none;"></div>
+          </form>
+        </div>
+
+        <!-- RIGHT: CERTIFICATE DIRECTORY -->
+        <div class="admin-card">
+          <div class="admin-card-title">
+            <span>Issued Certificates</span>
+            <span id="cert-count-badge" style="font-size: 0.82rem; font-weight: 600; background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 0.2rem 0.6rem; border-radius: 999px;">0 Records</span>
+          </div>
+
+          <div class="table-controls">
+            <input type="text" id="table-search" class="search-input" placeholder="Filter by Name, ID, or Field..." oninput="filterCertificates()" />
+            <select id="table-status-filter" class="filter-select" onchange="filterCertificates()">
+              <option value="all">All Statuses</option>
+              <option value="valid">Valid Only</option>
+              <option value="revoked">Revoked Only</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table class="cert-table">
+              <thead>
+                <tr>
+                  <th>Certificate ID</th>
+                  <th>Recipient Name</th>
+                  <th>Field / Position</th>
+                  <th>Period</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="cert-table-body">
+                <tr>
+                  <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    Loading certificates...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SUCCESS / QR MODAL -->
+  <div id="qr-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-box">
+      <button onclick="closeQrModal()" style="position: absolute; top: 1rem; right: 1.25rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer;">&times;</button>
+      
+      <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;" id="modal-title">
+        Certificate Created
+      </div>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;" id="modal-subtext">
+        Ready for graphic design team &amp; certificate artwork.
+      </p>
+
+      <img id="modal-qr-img" src="" alt="Verification QR Code" class="qr-preview-img" width="200" height="200" />
+
+      <div class="modal-url-box">
+        <span id="modal-url-text">https://www.byteform.org/verify/...</span>
+        <button class="btn-action-icon" onclick="copyModalUrl()" title="Copy URL">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
+      </div>
+
+      <div class="modal-actions-grid">
+        <button class="btn-secondary" onclick="downloadQrPng()" style="justify-content: center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download PNG (Print)
+        </button>
+        <button class="btn-secondary" onclick="downloadQrSvg()" style="justify-content: center;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download SVG (Vector)
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: center;">
+        <a id="modal-view-public-btn" href="#" target="_blank" class="text-link">
+          Open Public Verification Page &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="/script.js?v=2.0" defer></script>
+
+  <script>
+    let certificatesData = [];
+    let activeModalCert = null;
+
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast-msg';
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      try {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          const year = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1;
+          const day = parseInt(parts[2], 10);
+          const date = new Date(Date.UTC(year, month, day));
+          return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' });
+        }
+      } catch (e) {}
+      return dateStr;
+    }
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/admin/auth', { credentials: 'include' });
+        const json = await res.json();
+        if (json.authenticated) {
+          document.getElementById('auth-view').style.display = 'none';
+          document.getElementById('dashboard-view').style.display = 'block';
+          loadCertificates();
+        } else {
+          document.getElementById('auth-view').style.display = 'block';
+          document.getElementById('dashboard-view').style.display = 'none';
+        }
+      } catch (err) {
+        document.getElementById('auth-view').style.display = 'block';
+        document.getElementById('dashboard-view').style.display = 'none';
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const password = document.getElementById('admin-password-input').value;
+      const errorDiv = document.getElementById('login-error');
+      const btn = document.getElementById('login-btn');
+
+      errorDiv.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Authenticating...';
+
+      try {
+        const res = await fetch('/api/admin/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ password })
+        });
+        const json = await res.json();
+
+        if (json.success) {
+          document.getElementById('admin-password-input').value = '';
+          checkAuth();
+        } else {
+          errorDiv.textContent = json.error || 'Authentication failed';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Network or server error during sign-in';
+        errorDiv.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Unlock Console';
+      }
+    }
+
+    async function handleLogout() {
+      await fetch('/api/admin/auth', { method: 'DELETE', credentials: 'include' });
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('auth-view').style.display = 'block';
+    }
+
+    async function loadCertificates() {
+      try {
+        const res = await fetch('/api/admin/certificates', { credentials: 'include' });
+        if (res.status === 401) {
+          checkAuth();
+          return;
+        }
+        const json = await res.json();
+        certificatesData = json.certificates || [];
+        renderCertificates(certificatesData);
+      } catch (err) {
+        console.error('Failed to load certificates:', err);
+      }
+    }
+
+    function renderCertificates(certs) {
+      const tbody = document.getElementById('cert-table-body');
+      document.getElementById('cert-count-badge').textContent = `${certs.length} Record${certs.length === 1 ? '' : 's'}`;
+
+      if (!certs || certs.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+              No certificates issued yet. Fill the form on the left to issue your first certificate.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = certs.map(cert => {
+        const period = `${formatDate(cert.start_date)} — ${formatDate(cert.end_date)}`;
+        const created = formatDate(cert.created_at ? cert.created_at.split('T')[0] : '');
+        const isValid = cert.status === 'valid';
+
+        return `
+          <tr>
+            <td>
+              <span class="table-id-code">${cert.certificate_id}</span>
+            </td>
+            <td><strong>${escapeHtml(cert.name)}</strong></td>
+            <td>${escapeHtml(cert.internship_field)}</td>
+            <td><span style="font-size: 0.84rem; color: var(--text-secondary);">${period}</span></td>
+            <td>
+              <span class="badge-status ${cert.status}">
+                ${cert.status.toUpperCase()}
+              </span>
+            </td>
+            <td><span style="font-size: 0.82rem; color: var(--text-muted);">${created}</span></td>
+            <td>
+              <div class="table-actions">
+                <a href="${cert.verification_url || '/verify/' + cert.certificate_id}" target="_blank" class="btn-action-icon" title="View Public Page">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  View
+                </a>
+                <button class="btn-action-icon" onclick="copyLink('${cert.verification_url || '/verify/' + cert.certificate_id}')" title="Copy Verification URL">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  Copy
+                </button>
+                <button class="btn-action-icon" onclick="showCertQrModal('${cert.certificate_id}')" title="QR Code">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                  QR
+                </button>
+                ${isValid ? `
+                  <button class="btn-action-icon revoke-btn" onclick="revokeCert('${cert.certificate_id}', '${escapeHtml(cert.name)}')" title="Revoke Certificate">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                    Revoke
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterCertificates() {
+      const q = document.getElementById('table-search').value.toLowerCase().trim();
+      const statusFilter = document.getElementById('table-status-filter').value;
+
+      const filtered = certificatesData.filter(cert => {
+        const matchesStatus = (statusFilter === 'all') || (cert.status === statusFilter);
+        const matchesQuery = !q ||
+          cert.name.toLowerCase().includes(q) ||
+          cert.certificate_id.toLowerCase().includes(q) ||
+          cert.internship_field.toLowerCase().includes(q);
+        return matchesStatus && matchesQuery;
+      });
+
+      renderCertificates(filtered);
+    }
+
+    async function handleCreateCert(e) {
+      e.preventDefault();
+      const name = document.getElementById('cert-name').value.trim();
+      const internship_field = document.getElementById('cert-field').value.trim();
+      const start_date = document.getElementById('cert-start-date').value;
+      const end_date = document.getElementById('cert-end-date').value;
+      const status = document.getElementById('cert-status').value;
+      const errorDiv = document.getElementById('create-error');
+      const submitBtn = document.getElementById('btn-submit-cert');
+
+      errorDiv.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Generating Certificate...';
+
+      try {
+        const res = await fetch('/api/admin/certificates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ name, internship_field, start_date, end_date, status })
+        });
+        const json = await res.json();
+
+        if (json.success && json.certificate) {
+          showToast('Certificate successfully issued!');
+          document.getElementById('create-cert-form').reset();
+          loadCertificates();
+
+          // Display Success & QR Modal
+          openQrModal(json.certificate, 'Certificate Successfully Created');
+        } else {
+          errorDiv.textContent = json.error || 'Failed to create certificate';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Server communication error';
+        errorDiv.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create Certificate';
+      }
+    }
+
+    async function revokeCert(certId, name) {
+      if (!confirm(`Are you sure you want to revoke certificate ${certId} for ${name}? Once revoked, the public verification page will mark it as REVOKED.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/certificates', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ certificate_id: certId })
+        });
+        const json = await res.json();
+
+        if (json.success) {
+          showToast(`Certificate ${certId} marked as revoked.`);
+          loadCertificates();
+        } else {
+          alert(json.error || 'Failed to revoke certificate');
+        }
+      } catch (err) {
+        alert('Server communication error');
+      }
+    }
+
+    function openQrModal(cert, title = 'Certificate QR Code') {
+      activeModalCert = cert;
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-subtext').textContent = `${cert.name} · ${cert.certificate_id}`;
+      
+      const qrImg = document.getElementById('modal-qr-img');
+      const verifyUrl = cert.verification_url || `${window.location.origin}/verify/${cert.certificate_id}`;
+      
+      if (cert.qr_data_url) {
+        qrImg.src = cert.qr_data_url;
+      } else {
+        // Use serverless QR endpoint
+        qrImg.src = `/api/qr?text=${encodeURIComponent(verifyUrl)}&format=png`;
+      }
+
+      document.getElementById('modal-url-text').textContent = verifyUrl;
+      document.getElementById('modal-view-public-btn').href = verifyUrl;
+      document.getElementById('qr-modal').style.display = 'flex';
+    }
+
+    function showCertQrModal(certId) {
+      const cert = certificatesData.find(c => c.certificate_id === certId);
+      if (cert) {
+        openQrModal(cert, `QR Code · ${cert.certificate_id}`);
+      }
+    }
+
+    function closeQrModal() {
+      document.getElementById('qr-modal').style.display = 'none';
+      activeModalCert = null;
+    }
+
+    function copyModalUrl() {
+      if (!activeModalCert) return;
+      const url = activeModalCert.verification_url || `${window.location.origin}/verify/${activeModalCert.certificate_id}`;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Verification URL copied to clipboard!');
+      });
+    }
+
+    function copyLink(url) {
+      const fullUrl = url.startsWith('http') ? url : `${window.location.origin}${url}`;
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        showToast('Verification link copied to clipboard!');
+      });
+    }
+
+    function downloadQrPng() {
+      if (!activeModalCert) return;
+      const url = activeModalCert.verification_url || `${window.location.origin}/verify/${activeModalCert.certificate_id}`;
+      const filename = `QR-${activeModalCert.certificate_id}`;
+      window.location.href = `/api/qr?text=${encodeURIComponent(url)}&format=png&download=true&filename=${encodeURIComponent(filename)}`;
+    }
+
+    function downloadQrSvg() {
+      if (!activeModalCert) return;
+      const url = activeModalCert.verification_url || `${window.location.origin}/verify/${activeModalCert.certificate_id}`;
+      const filename = `QR-${activeModalCert.certificate_id}`;
+      window.location.href = `/api/qr?text=${encodeURIComponent(url)}&format=svg&download=true&filename=${encodeURIComponent(filename)}`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    window.addEventListener('DOMContentLoaded', checkAuth);
+  </script>
+</body>
+</html>

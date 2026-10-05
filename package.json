@@ -8,5 +8,9 @@
     "dev": "node server.js",
     "test": "node scripts/seo-check.js",
     "test:seo": "node scripts/seo-check.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "qrcode": "^1.5.4"
   }
 }

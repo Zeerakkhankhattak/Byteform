@@ -2,8 +2,96 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
 const ROOT_DIR = path.resolve(__dirname);
+
+// Load .env variables for local development
+function loadEnv() {
+  const envPath = path.join(ROOT_DIR, '.env');
+  if (fs.existsSync(envPath)) {
+    const content = fs.readFileSync(envPath, 'utf8');
+    for (const line of content.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const idx = trimmed.indexOf('=');
+      if (idx !== -1) {
+        const key = trimmed.slice(0, idx).trim();
+        let val = trimmed.slice(idx + 1).trim();
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.slice(1, -1);
+        }
+        if (!process.env[key]) {
+          process.env[key] = val;
+        }
+      }
+    }
+  }
+}
+loadEnv();
+
+const PORT = process.env.PORT || 3000;
+
+// Dispatch Node.js HTTP request to an ES Module Serverless Handler (api/*.js)
+function dispatchServerless(scriptPath, req, res) {
+  let body = '';
+  const MAX_BODY_BYTES = 500 * 1024;
+  let bodyOverflow = false;
+
+  req.on('data', chunk => {
+    body += chunk;
+    if (body.length > MAX_BODY_BYTES) {
+      bodyOverflow = true;
+      req.destroy();
+    }
+  });
+
+  req.on('end', async () => {
+    if (bodyOverflow) {
+      res.writeHead(413, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, error: 'Payload too large' }));
+      return;
+    }
+
+    try {
+      if (body) {
+        try {
+          req.body = JSON.parse(body);
+        } catch (e) {
+          req.body = body;
+        }
+      } else {
+        req.body = {};
+      }
+
+      const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+      req.query = Object.fromEntries(parsedUrl.searchParams.entries());
+
+      res.status = (code) => {
+        res.statusCode = code;
+        return res;
+      };
+      res.json = (data) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        res.end(JSON.stringify(data));
+        return res;
+      };
+      res.send = (data) => {
+        res.end(data);
+        return res;
+      };
+
+      const mod = await import(scriptPath);
+      const handler = mod.default || mod;
+      await handler(req, res);
+    } catch (err) {
+      console.error('API Error in server.js:', err);
+      if (!res.headersSent) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: err.message || 'Internal server error' }));
+      }
+    }
+  });
+}
+
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -129,8 +217,9 @@ const server = http.createServer((req, res) => {
   // Handle CORS preflight for API routes
   if (req.method === 'OPTIONS' && reqPath.startsWith('/api/')) {
     const corsHeaders = {
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Max-Age': '86400'
     };
     if (isAllowedOrigin) {
@@ -139,6 +228,24 @@ const server = http.createServer((req, res) => {
     }
     res.writeHead(204, corsHeaders);
     res.end();
+    return;
+  }
+
+  // Handle Certificate Verification & Admin APIs
+  if (reqPath === '/api/verify') {
+    dispatchServerless(path.join(ROOT_DIR, 'api', 'verify.js'), req, res);
+    return;
+  }
+  if (reqPath === '/api/admin/auth') {
+    dispatchServerless(path.join(ROOT_DIR, 'api', 'admin', 'auth.js'), req, res);
+    return;
+  }
+  if (reqPath === '/api/admin/certificates') {
+    dispatchServerless(path.join(ROOT_DIR, 'api', 'admin', 'certificates.js'), req, res);
+    return;
+  }
+  if (reqPath === '/api/qr') {
+    dispatchServerless(path.join(ROOT_DIR, 'api', 'qr.js'), req, res);
     return;
   }
 
@@ -327,6 +434,12 @@ const server = http.createServer((req, res) => {
     res.end();
     return;
   }
+  if (reqPath === '/admin' || reqPath === '/admin/') {
+    res.writeHead(301, { 'Location': '/admin/certificates' });
+    res.end();
+    return;
+  }
+
   // Redirect direct .html requests to clean URLs
   if (reqPath.endsWith('.html') && reqPath !== '/index.html') {
     const cleanPath = reqPath.slice(0, -5);
@@ -353,6 +466,15 @@ const server = http.createServer((req, res) => {
   if (!ext && fs.existsSync(filePath + '.html')) {
     filePath = filePath + '.html';
     ext = '.html';
+  }
+
+  // Dynamic certificate verification route rewrite (/verify/:certificateId)
+  if (reqPath.startsWith('/verify/') && reqPath !== '/verify/') {
+    const sub = reqPath.slice('/verify/'.length);
+    if (!sub.includes('.')) {
+      filePath = path.join(ROOT_DIR, 'verify', 'index.html');
+      ext = '.html';
+    }
   }
 
   // Re-verify that resolved path does not escape ROOT_DIR

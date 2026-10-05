@@ -4,8 +4,9 @@
 User-agent: *
 Allow: /
 
-# Prevent crawling of backend API endpoints and sensitive data
+# Prevent crawling of backend API endpoints, admin portal, and sensitive data
 Disallow: /api/
+Disallow: /admin/
 Disallow: /inquiries.json
 Disallow: /*.psd$
 Disallow: /blog/template

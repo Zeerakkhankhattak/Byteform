@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Certificate Verification | Byteform Digital Studio</title>
+  <meta name="description" content="Verify the authenticity of internship credentials and certificates issued by Byteform Digital Studio." />
+  <link rel="canonical" href="https://www.byteform.org/verify" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.byteform.org/verify" />
+  <meta property="og:site_name" content="Byteform Digital Studio" />
+  <meta property="og:title" content="Certificate Verification | Byteform Digital Studio" />
+  <meta property="og:description" content="Verify the authenticity of internship credentials and certificates issued by Byteform Digital Studio." />
+  <meta property="og:image" content="https://www.byteform.org/assets/byteform-og.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://www.byteform.org/verify" />
+  <meta name="twitter:title" content="Certificate Verification | Byteform Digital Studio" />
+  <meta name="twitter:description" content="Verify the authenticity of internship credentials and certificates issued by Byteform Digital Studio." />
+  <meta name="twitter:image" content="https://www.byteform.org/assets/byteform-og.png" />
+
+  <!-- Theme color -->
+  <meta name="theme-color" content="#090a0f" />
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+  <!-- Primary Styles -->
+  <link rel="stylesheet" href="/style.css?v=2.4" />
+
+  <style>
+    /* Specific styles for Certificate Verification portal */
+    .verify-hero {
+      padding: 7rem 0 3.5rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .verify-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      background: var(--accent-blue-subtle);
+      color: var(--accent-blue);
+      border: 1px solid var(--accent-blue-border);
+    }
+
+    .verify-title {
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .verify-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 580px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    .verify-card-container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .verify-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 2.25rem;
+      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s var(--ease-spring);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .verify-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-blue), #60a5fa, var(--accent-blue));
+    }
+
+    /* Verification States Styling */
+    .status-banner {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.1rem 1.25rem;
+      border-radius: 14px;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .status-banner.valid {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #10b981;
+    }
+
+    .status-banner.revoked {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #ef4444;
+    }
+
+    .status-banner.not-found {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #f59e0b;
+    }
+
+    .status-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .status-banner.valid .status-icon-wrap {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+    }
+
+    .status-banner.revoked .status-icon-wrap {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .status-banner.not-found .status-icon-wrap {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+    }
+
+    .status-heading {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.2rem;
+    }
+
+    .status-subtext {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Details Grid */
+    .cert-details-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+
+    .cert-field-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 0.9rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cert-field-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .cert-field-label {
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .cert-field-val {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: right;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cert-field-val.highlight {
+      font-size: 1.2rem;
+      color: var(--accent-blue);
+    }
+
+    .cert-id-badge {
+      font-family: var(--font-mono, monospace);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      color: var(--text-primary);
+      letter-spacing: 0.05em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .status-pill.valid {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-pill.revoked {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Verification Form */
+    .verify-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      text-align: left;
+    }
+
+    .verify-input-group {
+      position: relative;
+    }
+
+    .verify-input-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .verify-input {
+      width: 100%;
+      padding: 0.95rem 1.2rem;
+      font-size: 1.05rem;
+      font-family: var(--font-mono, monospace);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--input-bg);
+      border: 1px solid var(--border-medium);
+      border-radius: 12px;
+      color: var(--text-primary);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .verify-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .verify-btn {
+      width: 100%;
+      padding: 0.95rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background: var(--accent-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: all 0.2s ease;
+    }
+
+    .verify-btn:hover {
+      background: var(--accent-blue-hover);
+      transform: translateY(-1px);
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .back-action {
+      margin-top: 1.75rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .text-link {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .text-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Skeleton Loading State */
+    .skeleton-loader {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+
+    .skeleton-bar {
+      height: 24px;
+      background: linear-gradient(90deg, var(--border-subtle) 25%, var(--border-medium) 50%, var(--border-subtle) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @media (max-width: 600px) {
+      .verify-hero {
+        padding: 5.5rem 0 2.5rem;
+      }
+      .verify-card {
+        padding: 1.5rem;
+      }
+      .cert-field-row {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .cert-field-val {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="scroll-progress" class="scroll-progress-bar"></div>
+
+  <!-- SITE HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="site-logo" aria-label="Byteform Home">
+        <img src="/assets/byteform-logo-dark.png" alt="Byteform Digital Studio" class="logo-img logo-dark" width="240" height="80" decoding="async" />
+        <img src="/assets/byteform-logo-light.png" alt="" class="logo-img logo-light" width="240" height="80" decoding="async" aria-hidden="true" />
+      </a>
+
+      <nav class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/services" class="nav-link">Services</a>
+        <a href="/team" class="nav-link">Team</a>
+        <a href="/process" class="nav-link">Process</a>
+        <a href="/reviews" class="nav-link">Reviews</a>
+        <a href="/careers" class="nav-link">Careers</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme" title="Switch Theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+        <a href="/contact" class="btn btn-primary nav-cta">Start Project</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <section class="verify-hero">
+      <div class="container">
+        <div class="verify-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          Security &amp; Authenticity Portal
+        </div>
+        <h1 class="verify-title" id="page-heading">Certificate Verification</h1>
+        <p class="verify-subtitle" id="page-subheading">
+          Enter an issued certificate ID or scan the QR code to verify authentic internship credentials issued by Byteform Digital Studio.
+        </p>
+
+        <div class="verify-card-container">
+          <div class="verify-card" id="verification-card">
+            
+            <!-- STATE 1: LOADING SKELETON -->
+            <div id="state-loading" style="display: none;">
+              <div class="skeleton-loader">
+                <div class="skeleton-bar" style="width: 60%; height: 36px; margin: 0 auto 1.5rem;"></div>
+                <div class="skeleton-bar" style="width: 100%; height: 50px;"></div>
+                <div class="skeleton-bar" style="width: 100%; height: 50px;"></div>
+                <div class="skeleton-bar" style="width: 100%; height: 50px;"></div>
+              </div>
+            </div>
+
+            <!-- STATE 2: MANUAL SEARCH FORM -->
+            <div id="state-search">
+              <form id="manual-verify-form" class="verify-form" onsubmit="handleManualSearch(event)">
+                <div class="verify-input-group">
+                  <label for="certificate-id-input" class="verify-input-label">Enter Certificate ID</label>
+                  <input
+                    type="text"
+                    id="certificate-id-input"
+                    class="verify-input"
+                    placeholder="BF-INT-2026-X7K92P"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    required
+                  />
+                </div>
+                <button type="submit" class="verify-btn" id="verify-submit-btn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  Verify Certificate
+                </button>
+              </form>
+            </div>
+
+            <!-- STATE 3: VERIFIED / AUTHENTIC -->
+            <div id="state-valid" style="display: none;">
+              <div class="status-banner valid">
+                <div class="status-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <div>
+                  <div class="status-heading">&#10003; CERTIFICATE VERIFIED</div>
+                  <div class="status-subtext">This certificate is authentic and was officially issued by Byteform Digital Studio.</div>
+                </div>
+              </div>
+
+              <div class="cert-details-grid">
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Certificate Holder</span>
+                  <span class="cert-field-val highlight" id="holder-name">—</span>
+                </div>
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Internship Field</span>
+                  <span class="cert-field-val" id="holder-field">—</span>
+                </div>
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Internship Period</span>
+                  <span class="cert-field-val" id="holder-period">—</span>
+                </div>
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Certificate ID</span>
+                  <span class="cert-field-val">
+                    <span class="cert-id-badge" id="holder-id">—</span>
+                    <button class="copy-btn" id="copy-id-btn" title="Copy Certificate ID" onclick="copyCertId()">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                  </span>
+                </div>
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Status</span>
+                  <span class="cert-field-val">
+                    <span class="status-pill valid">&#10003; VALID</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="back-action">
+                <a href="/verify" class="text-link" onclick="resetToSearch(event)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  Verify another certificate
+                </a>
+              </div>
+            </div>
+
+            <!-- STATE 4: REVOKED -->
+            <div id="state-revoked" style="display: none;">
+              <div class="status-banner revoked">
+                <div class="status-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                  </svg>
+                </div>
+                <div>
+                  <div class="status-heading">CERTIFICATE REVOKED</div>
+                  <div class="status-subtext">This certificate was previously issued by Byteform, but is no longer valid.</div>
+                </div>
+              </div>
+
+              <div class="cert-details-grid">
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Certificate Holder</span>
+                  <span class="cert-field-val" id="revoked-name">—</span>
+                </div>
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Internship Field</span>
+                  <span class="cert-field-val" id="revoked-field">—</span>
+                </div>
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Internship Period</span>
+                  <span class="cert-field-val" id="revoked-period">—</span>
+                </div>
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Certificate ID</span>
+                  <span class="cert-field-val">
+                    <span class="cert-id-badge" id="revoked-id">—</span>
+                  </span>
+                </div>
+                <div class="cert-field-row">
+                  <span class="cert-field-label">Status</span>
+                  <span class="cert-field-val">
+                    <span class="status-pill revoked">&#9888; REVOKED</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="back-action">
+                <a href="/verify" class="text-link" onclick="resetToSearch(event)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  Verify another certificate
+                </a>
+              </div>
+            </div>
+
+            <!-- STATE 5: NOT FOUND -->
+            <div id="state-not-found" style="display: none;">
+              <div class="status-banner not-found">
+                <div class="status-icon-wrap">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
+                <div>
+                  <div class="status-heading">&#10005; CERTIFICATE NOT FOUND</div>
+                  <div class="status-subtext">We could not find an authentic certificate matching ID <strong id="searched-id-display"></strong>.</div>
+                </div>
+              </div>
+
+              <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 1.5rem; text-align: left; line-height: 1.5;">
+                Please ensure you have typed the certificate ID accurately (including hyphens, e.g. <span style="font-family: var(--font-mono); color: var(--accent-blue);">BF-INT-2026-X7K92P</span>). If you believe this is an error, please reach out to <a href="mailto:byteform3@gmail.com" style="color: var(--accent-blue);">byteform3@gmail.com</a>.
+              </p>
+
+              <div class="back-action">
+                <a href="/verify" class="text-link" onclick="resetToSearch(event)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  Try another certificate ID
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col footer-col-brand">
+        <a href="/" class="site-logo footer-logo" aria-label="Byteform Home">
+          <img src="/assets/byteform-logo-dark.png" alt="Byteform Digital Studio" class="logo-img logo-dark" width="240" height="80" decoding="async" />
+          <img src="/assets/byteform-logo-light.png" alt="" class="logo-img logo-light" width="240" height="80" decoding="async" aria-hidden="true" />
+        </a>
+        <p class="footer-desc">
+          Minimalist Digital Atelier &amp; Software Engineering Studio based in Peshawar.
+        </p>
+        <a href="mailto:byteform3@gmail.com" class="footer-email-badge">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+          <span>byteform3@gmail.com</span>
+        </a>
+      </div>
+
+      <div class="footer-col">
+        <p class="footer-title">Studio Directory</p>
+        <ul class="footer-links">
+          <li><a href="/" class="footer-link">Home</a></li>
+          <li><a href="/services" class="footer-link">Services</a></li>
+          <li><a href="/team" class="footer-link">Team</a></li>
+          <li><a href="/process" class="footer-link">Process</a></li>
+          <li><a href="/reviews" class="footer-link">Reviews</a></li>
+          <li><a href="/careers" class="footer-link">Careers</a></li>
+          <li><a href="/verify" class="footer-link">Certificate Verification</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <p class="footer-title">Engineering Disciplines</p>
+        <ul class="footer-links">
+          <li><a href="/services/web-development" class="footer-link">Web Development</a></li>
+          <li><a href="/services/mobile-app-development" class="footer-link">Mobile Apps</a></li>
+          <li><a href="/services/ai-automation" class="footer-link">AI Automation</a></li>
+          <li><a href="/services/ui-ux-design" class="footer-link">UI/UX Design</a></li>
+          <li><a href="/services/cloud-devops" class="footer-link">Cloud &amp; DevOps</a></li>
+          <li><a href="/services/technical-seo" class="footer-link">Technical SEO</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <p class="footer-title">Connect &amp; Social</p>
+        <div class="social-links">
+          <a href="https://www.instagram.com/byteform_/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61595005520939" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="Facebook">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/company/byteform/" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="LinkedIn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.67 1.67 0 1 0 0-3.34 1.67 1.67 0 0 0 0 3.34M7.86 18.5V10.13H5.07V18.5h2.79z"/></svg>
+          </a>
+          <a href="https://wa.me/923711292921" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="WhatsApp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div>&copy; 2026 Byteform Digital Studio &middot; All rights reserved</div>
+      <div style="display: flex; gap: 1.5rem;">
+        <a href="/careers" style="color: inherit; text-decoration: none;">Careers</a>
+        <a href="mailto:byteform3@gmail.com" style="color: inherit; text-decoration: none;">byteform3@gmail.com</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/script.js?v=2.0" defer></script>
+
+  <script>
+    // Certificate Verification Frontend Controller
+    let currentCertId = '';
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      try {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+          const year = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1;
+          const day = parseInt(parts[2], 10);
+          const date = new Date(Date.UTC(year, month, day));
+          return date.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            timeZone: 'UTC'
+          });
+        }
+      } catch (e) {}
+      return dateStr;
+    }
+
+    function switchState(stateName) {
+      const states = ['loading', 'search', 'valid', 'revoked', 'not-found'];
+      states.forEach(s => {
+        const el = document.getElementById('state-' + s);
+        if (el) el.style.display = (s === stateName) ? 'block' : 'none';
+      });
+
+      const heading = document.getElementById('page-heading');
+      const subheading = document.getElementById('page-subheading');
+
+      if (stateName === 'valid') {
+        heading.textContent = 'Certificate Authentic';
+        subheading.textContent = 'Verification verified against the official Byteform Digital Studio records.';
+      } else if (stateName === 'revoked') {
+        heading.textContent = 'Certificate Revoked';
+        subheading.textContent = 'This certificate was previously issued but has been officially revoked.';
+      } else if (stateName === 'not-found') {
+        heading.textContent = 'Certificate Not Found';
+        subheading.textContent = 'No matching authentic credential could be located in our registry.';
+      } else {
+        heading.textContent = 'Certificate Verification';
+        subheading.textContent = 'Enter an issued certificate ID or scan the QR code to verify authentic credentials.';
+      }
+    }
+
+    async function verifyCertificate(certId) {
+      if (!certId) return;
+      const cleanId = certId.trim().toUpperCase();
+      currentCertId = cleanId;
+
+      switchState('loading');
+
+      try {
+        const res = await fetch(`/api/verify?id=${encodeURIComponent(cleanId)}`);
+        const json = await res.json();
+
+        if (res.status === 404 || !json.found || !json.certificate) {
+          document.getElementById('searched-id-display').textContent = cleanId;
+          switchState('not-found');
+          return;
+        }
+
+        const cert = json.certificate;
+        const formattedPeriod = `${formatDate(cert.start_date)} — ${formatDate(cert.end_date)}`;
+
+        if (cert.status === 'revoked') {
+          document.getElementById('revoked-name').textContent = cert.name;
+          document.getElementById('revoked-field').textContent = cert.internship_field;
+          document.getElementById('revoked-period').textContent = formattedPeriod;
+          document.getElementById('revoked-id').textContent = cert.certificate_id;
+          switchState('revoked');
+        } else {
+          document.getElementById('holder-name').textContent = cert.name;
+          document.getElementById('holder-field').textContent = cert.internship_field;
+          document.getElementById('holder-period').textContent = formattedPeriod;
+          document.getElementById('holder-id').textContent = cert.certificate_id;
+          switchState('valid');
+        }
+      } catch (err) {
+        console.error('Verification query failed:', err);
+        document.getElementById('searched-id-display').textContent = cleanId;
+        switchState('not-found');
+      }
+    }
+
+    function handleManualSearch(e) {
+      e.preventDefault();
+      const input = document.getElementById('certificate-id-input');
+      const val = input.value.trim().toUpperCase();
+      if (!val) return;
+
+      // Update URL without page reload
+      window.history.pushState({ certId: val }, '', `/verify/${encodeURIComponent(val)}`);
+      verifyCertificate(val);
+    }
+
+    function resetToSearch(e) {
+      if (e) e.preventDefault();
+      window.history.pushState({}, '', '/verify');
+      const input = document.getElementById('certificate-id-input');
+      if (input) {
+        input.value = '';
+        setTimeout(() => input.focus(), 50);
+      }
+      switchState('search');
+    }
+
+    function copyCertId() {
+      if (!currentCertId) return;
+      navigator.clipboard.writeText(currentCertId).then(() => {
+        const btn = document.getElementById('copy-id-btn');
+        if (btn) {
+          const original = btn.innerHTML;
+          btn.innerHTML = '<span style="font-size: 0.75rem; color: #10b981; font-weight: 700;">COPIED</span>';
+          setTimeout(() => { btn.innerHTML = original; }, 2000);
+        }
+      });
+    }
+
+    // Inspect URL on page load to see if a certificate ID was passed
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Pathname check (e.g. /verify/BF-INT-2026-X7K92P)
+      const pathname = window.location.pathname;
+      let matchedId = '';
+
+      if (pathname.startsWith('/verify/')) {
+        const segment = pathname.replace('/verify/', '').trim();
+        if (segment && segment !== 'index.html') {
+          matchedId = decodeURIComponent(segment);
+        }
+      }
+
+      // 2. Query param check (e.g. /verify?id=BF-INT-2026-X7K92P)
+      if (!matchedId) {
+        const params = new URLSearchParams(window.location.search);
+        matchedId = params.get('id') || '';
+      }
+
+      if (matchedId) {
+        const input = document.getElementById('certificate-id-input');
+        if (input) input.value = matchedId.toUpperCase();
+        verifyCertificate(matchedId);
+      } else {
+        switchState('search');
+      }
+    });
+
+    // Handle browser forward/back buttons
+    window.addEventListener('popstate', (e) => {
+      const pathname = window.location.pathname;
+      if (pathname.startsWith('/verify/') && pathname !== '/verify/' && pathname !== '/verify') {
+        const segment = decodeURIComponent(pathname.replace('/verify/', '').trim());
+        verifyCertificate(segment);
+      } else {
+        switchState('search');
+      }
+    });
+  </script>
+</body>
+</html>

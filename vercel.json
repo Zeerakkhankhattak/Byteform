@@ -37,7 +37,12 @@
     { "source": "/careers.html", "destination": "/careers", "permanent": true },
     { "source": "/contact.html", "destination": "/contact", "permanent": true },
     { "source": "/estimator.html", "destination": "/", "permanent": true },
-    { "source": "/estimator", "destination": "/", "permanent": true }
+    { "source": "/estimator", "destination": "/", "permanent": true },
+    { "source": "/admin", "destination": "/admin/certificates", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/verify/:id", "destination": "/verify/index.html" },
+    { "source": "/admin/certificates", "destination": "/admin/certificates/index.html" }
   ],
   "headers": [
     {
