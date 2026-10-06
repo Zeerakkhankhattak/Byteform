@@ -2,8 +2,16 @@ import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
 
+function getSupabaseUrl() {
+  return (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim();
+}
+
+function getSupabaseKey() {
+  return (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY || '').trim();
+}
+
 function ensureEnvLoaded() {
-  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) return;
+  if (getSupabaseUrl() && getSupabaseKey()) return;
   try {
     const envPath = path.resolve(process.cwd(), '.env');
     if (fs.existsSync(envPath)) {
@@ -34,14 +42,14 @@ export function getSupabaseAdmin() {
 
   ensureEnvLoaded();
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = getSupabaseUrl();
+  const supabaseServiceKey = getSupabaseKey();
 
   if (!supabaseUrl || !supabaseServiceKey) {
     const missing = [];
-    if (!supabaseUrl) missing.push('SUPABASE_URL');
-    if (!supabaseServiceKey) missing.push('SUPABASE_SERVICE_ROLE_KEY');
-    throw new Error(`Missing required Supabase environment variables: ${missing.join(', ')}. Please check your .env file or Vercel dashboard.`);
+    if (!supabaseUrl) missing.push('SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL)');
+    if (!supabaseServiceKey) missing.push('SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_SERVICE_KEY / SUPABASE_KEY)');
+    throw new Error(`Missing required Supabase environment variables: ${missing.join(', ')}. Please check your Vercel Project Settings > Environment Variables or local .env file.`);
   }
 
   cachedClient = createClient(supabaseUrl, supabaseServiceKey, {
@@ -56,5 +64,5 @@ export function getSupabaseAdmin() {
 
 export function isSupabaseConfigured() {
   ensureEnvLoaded();
-  return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return Boolean(getSupabaseUrl() && getSupabaseKey());
 }

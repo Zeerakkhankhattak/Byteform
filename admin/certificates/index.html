@@ -745,7 +745,27 @@
           checkAuth();
           return;
         }
+        if (!res.ok) {
+          let errorMsg = `Server error loading certificates (${res.status})`;
+          try {
+            const errJson = await res.json();
+            if (errJson && errJson.error) {
+              errorMsg = errJson.error;
+            }
+          } catch (_) {
+            try {
+              const text = await res.text();
+              if (text && text.length < 150) errorMsg = text;
+            } catch (e) {}
+          }
+          console.error('Failed to load certificates:', res.status, errorMsg);
+          showToast(errorMsg, 'error');
+          return;
+        }
         const json = await res.json();
+        if (json.warning) {
+          showToast(json.warning, 'error');
+        }
         certificatesData = json.certificates || [];
         renderCertificates(certificatesData);
       } catch (err) {

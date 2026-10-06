@@ -1,9 +1,15 @@
 import QRCode from 'qrcode';
 
+const qrLib = (QRCode && QRCode.default) ? QRCode.default : QRCode;
+
 // Generates pure vector SVG without any native canvas / C++ dependencies
 export async function generateQrSvg(text) {
   try {
-    return await QRCode.toString(text, {
+    if (!qrLib || typeof qrLib.toString !== 'function') {
+      console.warn('QRCode library toString method not available');
+      return '';
+    }
+    return await qrLib.toString(text, {
       type: 'svg',
       margin: 2,
       color: {
