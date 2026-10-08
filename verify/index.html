@@ -751,7 +751,8 @@
 
     async function verifyCertificate(certId) {
       if (!certId) return;
-      const cleanId = certId.trim().toUpperCase();
+      const cleanId = certId.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+      if (!cleanId) return;
       currentCertId = cleanId;
 
       switchState('loading');
@@ -830,7 +831,7 @@
       let matchedId = '';
 
       if (pathname.startsWith('/verify/')) {
-        const segment = pathname.replace('/verify/', '').trim();
+        let segment = pathname.replace(/^\/verify\/?/i, '').replace(/\/+$/, '').trim();
         if (segment && segment !== 'index.html') {
           matchedId = decodeURIComponent(segment);
         }
@@ -843,6 +844,7 @@
       }
 
       if (matchedId) {
+        matchedId = matchedId.trim();
         const input = document.getElementById('certificate-id-input');
         if (input) input.value = matchedId.toUpperCase();
         verifyCertificate(matchedId);
@@ -854,9 +856,19 @@
     // Handle browser forward/back buttons
     window.addEventListener('popstate', (e) => {
       const pathname = window.location.pathname;
+      let matchedId = '';
       if (pathname.startsWith('/verify/') && pathname !== '/verify/' && pathname !== '/verify') {
-        const segment = decodeURIComponent(pathname.replace('/verify/', '').trim());
-        verifyCertificate(segment);
+        let segment = pathname.replace(/^\/verify\/?/i, '').replace(/\/+$/, '').trim();
+        if (segment && segment !== 'index.html') {
+          matchedId = decodeURIComponent(segment);
+        }
+      }
+      if (!matchedId) {
+        const params = new URLSearchParams(window.location.search);
+        matchedId = params.get('id') || '';
+      }
+      if (matchedId) {
+        verifyCertificate(matchedId);
       } else {
         switchState('search');
       }

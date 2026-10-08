@@ -6,6 +6,19 @@
     <title>404 - Page Not Found | Byteform Digital Studio</title>
     <meta name="description" content="The page you requested could not be located on Byteform Digital Studio. Return to our homepage or explore our engineering services." />
     <meta name="robots" content="noindex, follow" />
+    <script>
+      (function() {
+        try {
+          var p = window.location.pathname;
+          if (p && p.indexOf('/verify/') === 0 && p !== '/verify/' && p !== '/verify/index.html') {
+            var id = p.replace(/^\/verify\/?/i, '').replace(/\/+$/, '').trim();
+            if (id) {
+              window.location.replace('/verify?id=' + encodeURIComponent(id));
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
 
     <!-- Google Sans / Plus Jakarta Sans Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

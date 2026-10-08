@@ -41,8 +41,7 @@
     { "source": "/admin", "destination": "/admin/certificates", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/verify/:id", "destination": "/verify/index.html" },
-    { "source": "/admin/certificates", "destination": "/admin/certificates/index.html" }
+    { "source": "/verify/:id", "destination": "/verify" }
   ],
   "headers": [
     {
