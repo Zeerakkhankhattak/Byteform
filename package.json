@@ -2,6 +2,7 @@
   "name": "byteform",
   "version": "1.0.0",
   "description": "Byteform Digital Atelier",
+  "type": "module",
   "scripts": {
     "build": "node scripts/generate-sitemap.js",
     "start": "node server.js",

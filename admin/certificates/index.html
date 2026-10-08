@@ -651,17 +651,22 @@
     let certificatesData = [];
     let activeModalCert = null;
 
-    function showToast(message) {
+    function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'toast-msg';
+      if (type === 'error') {
+        toast.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+        toast.style.color = '#fca5a5';
+      }
       toast.textContent = message;
       container.appendChild(toast);
+      const duration = type === 'error' ? 6000 : 3000;
       setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transition = 'opacity 0.3s ease';
         setTimeout(() => toast.remove(), 300);
-      }, 2500);
+      }, duration);
     }
 
     function formatDate(dateStr) {
@@ -745,31 +750,37 @@
           checkAuth();
           return;
         }
+
+        const text = await res.text();
+        let json;
+        try {
+          json = JSON.parse(text);
+        } catch (_) {
+          json = null;
+        }
+
         if (!res.ok) {
           let errorMsg = `Server error loading certificates (${res.status})`;
-          try {
-            const errJson = await res.json();
-            if (errJson && errJson.error) {
-              errorMsg = errJson.error;
-            }
-          } catch (_) {
-            try {
-              const text = await res.text();
-              if (text && text.length < 150) errorMsg = text;
-            } catch (e) {}
+          if (json && json.error) {
+            errorMsg = json.error;
+          } else if (text && text.trim().length > 0 && text.length < 250) {
+            errorMsg = text.trim();
           }
           console.error('Failed to load certificates:', res.status, errorMsg);
           showToast(errorMsg, 'error');
           return;
         }
-        const json = await res.json();
-        if (json.warning) {
-          showToast(json.warning, 'error');
+
+        if (json) {
+          if (json.warning) {
+            showToast(json.warning, 'error');
+          }
+          certificatesData = json.certificates || [];
+          renderCertificates(certificatesData);
         }
-        certificatesData = json.certificates || [];
-        renderCertificates(certificatesData);
       } catch (err) {
         console.error('Failed to load certificates:', err);
+        showToast('Network error loading certificates', 'error');
       }
     }
 
